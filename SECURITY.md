@@ -2,21 +2,27 @@
 
 ## Privacy & Local-First Architecture
 
-StoreReceiptAnalyzer is designed with a strict **local-first** approach:
-* **No Telemetry:** The application does not collect analytics, track usage, or send telemetry data. (It only periodically checks the GitHub repository to verify if a new version is available).
-* **No External Cloud:** Receipt images, text, and parsed financial data are never sent to external cloud services.
-* **Local AI:** All processing relies on local AI models via Ollama. 
+StoreReceiptAnalyzer is designed with a strict **local-first** approach.
 
-### Network & Ollama Configuration
-While the application defaults to running Ollama locally or within your private **LAN**, it technically supports connecting to a remote Ollama instance via `OLLAMA_HOST` in `.env`.
+- **No telemetry:** The application does not collect analytics, usage statistics, or telemetry data. It only performs an optional GitHub version check to notify users when a new release is available.
+- **No external cloud processing:** Receipt images, extracted text, and financial data are never sent to external cloud AI services by StoreReceiptAnalyzer.
+- **Local AI:** AI processing is performed using Ollama, allowing all models to run on your own hardware.
+
+## Network & Ollama Configuration
+
+By default, StoreReceiptAnalyzer is intended to connect to a local Ollama instance or one running within your private network.
+
+The application also supports connecting to a remote Ollama server through the `OLLAMA_HOST` setting in the `.env` file.
+
+The security of a remote Ollama server, including network exposure, authentication, firewall configuration, and access control, is the responsibility of the system administrator.
 
 ---
 
 ## Reporting a Vulnerability
 
-If you discover a security vulnerability within StoreReceiptAnalyzer, please report it responsibly:
+If you discover a security vulnerability in StoreReceiptAnalyzer, please report it responsibly.
 
-* **Do not** open a public GitHub issue for sensitive security vulnerabilities.
-* Instead, please contact the maintainer directly or open a private advisory via GitHub Security Advisories if available.
+- **Do not** open a public GitHub issue for sensitive security vulnerabilities.
+- Instead, contact the maintainer directly or use GitHub Security Advisories if they are enabled for this repository.
 
-We appreciate your help in keeping the project secure!
+Thank you for helping keep StoreReceiptAnalyzer secure.
