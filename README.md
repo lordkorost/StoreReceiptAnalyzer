@@ -1,23 +1,28 @@
 # StoreReceiptAnalyzer
 
-A self-hosted, local AI-powered platform designed to transform shopping receipts into structured expense data while keeping your financial information under your control.
+StoreReceiptAnalyzer is a self-hosted, local AI-powered platform that transforms shopping receipts into structured expense data while keeping your financial information private and fully under your control.
 
-[![Privacy First](https://img.shields.io/badge/Privacy-Local%2FSelf--Hosted-success?style=flat-square)](docs/ADVANCED_INSTALL.md)
-[![Docker Supported](https://img.shields.io/badge/Docker-Ready-blue?style=flat-square)](docs/DOCKER_INSTALL.md)
-[![Ollama](https://img.shields.io/badge/AI-Ollama-orange?style=flat-square)](https://ollama.com)
+It combines OCR, deterministic normalization, and local LLMs to extract structured shopping data from receipt images.
 
 ---
 
 ## Key Features
 
-* **📄 Receipt Processing:** Upload and manage receipts via web interface.
-* **🔍 Local OCR:** Text extraction powered by vision AI models.
-* **🤖 Smart Extraction:** LLM-driven parsing for products, prices, and discounts.
-* **🧠 Memory & Categories:** Automatic product name learning and categorization.
-* **✏️ Manual Review:** Streamlined workflow to correct any errors.
-* **⚡ Live Updates:** Real-time notifications via WebSockets (Django Channels + Redis).
-* **🔒 100% Privacy:** Local-first architecture; no data sent to external clouds.
-* **🖥️ Hardware Flexibility:** Support for local or remote Ollama servers over your LAN.
+* **Receipt Processing**  Upload and manage shopping receipts through a simple web interface.
+
+* **Local OCR**  Extract text using local vision AI models.
+
+* **Smart Data Extraction**  Automatically identify products, quantities, prices, discounts, and totals using LLMs.
+
+* **Product Memory & Categorization**  Learn product names over time and automatically categorize future purchases.
+
+* **Manual Review**  Review and correct extracted information before saving it.
+
+* **Real-Time Progress**  Track long-running tasks with live updates powered by Django Channels and Redis.
+
+* **Privacy by Design**  Receipt images and financial data remain under your control with local AI processing.
+
+* **Flexible AI Deployment**  Connect to a local or remote Ollama server running on your private network.
 
 ---
 
@@ -43,7 +48,7 @@ The system combines deterministic rules with AI models to ensure maximum reliabi
 
 ##  Architecture
 
-The project consists of two main components communicating via **Redis** and **WebSockets**:
+The project is composed of two main components:
 
 | Component | Main Role |
 | :--- | :--- |
@@ -54,9 +59,9 @@ The project consists of two main components communicating via **Redis** and **We
 
 ## AI Models (Ollama)
 
-Runs entirely on local models via [Ollama](https://ollama.com). You can run them on the same machine or another computer on your network across four key roles:
+StoreReceiptAnalyzer uses local AI models through [Ollama](https://ollama.com). You can run them on the same machine or another computer on your network across four key roles:
 1. **Vision OCR** (to read the image)
-2. **Analysis** (to extract products datas from the normalized ocr)
+2. **Analysis** (to extract products data from the normalized OCR)
 3. **Categorization** (to assign categories)
 4. **Chat** (to interact with the AI to help with regex in store templates)
 
@@ -66,18 +71,18 @@ Runs entirely on local models via [Ollama](https://ollama.com). You can run them
 
 Choose the method that best fits your setup:
 
-| Method | Description | Reference Guide |
+| Method | Description | Guide |
 | :--- | :--- | :--- |
-| **Docker** *(Recommended)* | Includes WebUI, Worker, PostgreSQL, and Redis. | [📖 Docker Guide](docs/DOCKER_INSTALL.md) |
-| **Manual** | Run directly on your system without Docker. | [📖 Manual Guide](docs/MANUAL_INSTALL.md) |
-| **Advanced** | Advanced local server setup with Nginx, SSL, Systemd, and LAN. | [📖 Advanced Guide](docs/ADVANCED_INSTALL.md) |
+| **Docker** *(Recommended)* | Includes WebUI, Worker, PostgreSQL, and Redis. | [ Docker Guide](docs/DOCKER_INSTALL.md) |
+| **Manual** | Run directly on your system without Docker. | [ Manual Guide](docs/MANUAL_INSTALL.md) |
+| **Advanced** | Advanced local server setup with Nginx, HTTPS, Systemd, and LAN access. | [ Advanced Guide](docs/ADVANCED_INSTALL.md) |
 
 ---
 
 ## Notes & Limitations
 
-* **Receipt normalization** templates are currently optimized and tested with Italian supermarket receipts.
-* **OCR correction** rules are based on Italian receipt layouts and abbreviations
+* **Receipt normalization** templates are currently optimized and tested for Italian supermarket receipts.
+* **OCR normalization** rules are based on Italian receipt layouts and abbreviations
 * **Default prompts** and **product categories** are in Italian
 * **The application architecture** is designed to support additional countries and receipt formats in the future through configurable store templates.
 * **Languages:** The user interface supports both English and Italian.
@@ -99,6 +104,6 @@ Planned improvements:
 
 ---
 
-## 🛡️ Privacy
+## Privacy
 
-StoreReceiptAnalyzer is built with a **local-first** philosophy: your receipt images and financial data never leave your devices, relying solely on the hardware you own.
+StoreReceiptAnalyzer is built with a **local-first** philosophy: your receipt images and financial data remain under your control and are processed using hardware you own.
