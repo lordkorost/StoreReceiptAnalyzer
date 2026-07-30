@@ -1,0 +1,189 @@
+{% extends 'spese/base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Edit Receipt" %} - AnalizzaScontrini{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0"><i class="bi bi-pencil-square"></i> {% trans "Edit Receipt" %}</h2>
+    <a href="{% url 'receipt_summary' pk=receipt.id %}" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left"></i> {% trans "Back to Summary" %}
+    </a>
+</div>
+
+<form method="post">
+    {% csrf_token %}
+
+    <!-- DATI GENERALI -->
+    <div class="card shadow-sm mb-4">
+        <div class="card-header bg-warning text-dark fw-bold">
+            {% trans "General Data" %}
+        </div>
+        <div class="card-body">
+            <div class="row g-3">
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">{% trans "Store (OCR)" %}</label>
+                    <input type="text" name="ocr_store_name" class="form-control" value="{{ receipt.ocr_store_name }}">
+                </div>
+                <div class="col-md-6">
+
+
+
+
+                   <label class="form-label fw-bold">{% trans "Mapped Store" %}</label>
+                    <select name="store" id="store-select" class="form-select">
+                        <option value="">{% trans "-- Not specified --" %}</option>
+                        {% for store in stores %}
+                            <option value="{{ store.id }}">
+                                {{ store.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">{% trans "Receipt Date" %}</label>
+                    <input type="date" name="receipt_date" class="form-control" value="{{ receipt.receipt_date|date:'Y-m-d' }}">
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label fw-bold">{% trans "Total" %} (€)</label>
+                    <input type="number" step="0.01" name="total" class="form-control fw-bold text-primary" value="{{ receipt.total }}">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DETTAGLIO ARTICOLI -->
+    <div class="d-flex justify-content-between align-items-center mb-2">
+        <h5 class="mb-0">{% trans "Item Details" %}</h5>
+        <button type="button" class="btn btn-sm btn-success" onclick="aggiungiRiga()">
+            <i class="bi bi-plus-circle"></i> {% trans "Add Item" %}
+        </button>
+    </div>
+
+    <div class="card shadow-sm mb-4">
+        <div class="card-body p-0">
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0" id="tabella-voci">
+                    <thead class="table-light">
+                        <tr>
+                            <th style="width: 5%;">{% trans "Del." %}</th>
+                            <th style="width: 20%;">{% trans "OCR Text" %}</th>
+                            <th style="width: 20%;">{% trans "Item Name" %}</th>
+                            <th style="width: 15%;">{% trans "Category" %}</th>
+                            <th style="width: 8%;">{% trans "Qty" %}</th>
+                            <th style="width: 10%;">{% trans "Unit Price" %}</th>
+                            <th style="width: 10%;">{% trans "Discount" %}</th>
+                            <th style="width: 12%;">{% trans "Total Price" %}</th>
+                        </tr>
+                    </thead>
+                    <tbody id="corpo-tabella">
+                        {% for item in receipt.items.all %}
+                        <tr>
+                            <td class="text-center">
+                                <input type="checkbox" name="delete_{{ item.id }}" class="form-check-input" title="{% trans 'Check to delete this row' %}">
+                            </td>
+                            <td class="text-muted small font-monospace">{{ item.original_text }}</td>
+                            <td>
+                                <input list="lista_articoli" type="text" name="product_name_{{ item.id }}" class="form-control form-control-sm" value="{{ item.product.name|default:'' }}">
+                            </td>
+                            <td>
+                                <select name="category_{{ item.id }}" class="form-select form-select-sm">
+                                    <option value="">{% trans "-- Choose --" %}</option>
+                                    {% for category in categories %}
+                                        <option value="{{ category.id }}" {% if item.product.category.id == category.id %}selected{% endif %}>
+                                            {{ category.name }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            </td>
+                            <td>
+                                <input type="number" step="0.01" name="quantity_{{ item.id }}" class="form-control form-control-sm text-center" value="{{ item.quantity|default:1 }}">
+                            </td>
+                            <td>
+                                <input type="number" step="0.01" name="unit_price_{{ item.id }}" class="form-control form-control-sm" value="{{ item.unit_price|default:0 }}">
+                            </td>
+                            <td>
+                                <input type="number" step="0.01" name="discount_{{ item.id }}" class="form-control form-control-sm text-danger" value="{{ item.discount|default:0 }}">
+                            </td>
+                            <td>
+                                <input type="number" step="0.01" name="price_{{ item.id }}" class="form-control form-control-sm fw-bold" value="{{ item.price }}">
+                            </td>
+                        </tr>
+                        {% empty %}
+                        <tr id="riga-vuota">
+                            <td colspan="8" class="text-center py-4 text-muted">{% trans "No items. Add one manually." %}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- DATALIST PER AUTOCOMPLETE -->
+    <datalist id="lista_articoli">
+        {% for product in products %}
+            <option value="{{ product.name }}"></option>
+        {% endfor %}
+    </datalist>
+
+    <!-- PULSANTE FINALI -->
+    <div class="d-flex justify-content-end gap-2">
+        <a href="{% url 'receipt_summary' pk=receipt.id %}" class="btn btn-secondary btn-lg">
+            <i class="bi bi-x-circle"></i> {% trans "Cancel" %}
+        </a>
+        <button type="submit" class="btn btn-warning text-dark fw-bold btn-lg">
+            <i class="bi bi-check-circle"></i> {% trans "Save All Changes" %}
+        </button>
+    </div>
+</form>
+
+<!-- SCRIPT PER AGGIUNGERE RIGHE -->
+<script>
+    function aggiungiRiga() {
+        const tbody = document.getElementById('corpo-tabella');
+        const rigaVuota = document.getElementById('riga-vuota');
+        if (rigaVuota) rigaVuota.remove();
+
+        const newRow = document.createElement('tr');
+        newRow.innerHTML = `
+            <td class="text-center">
+                <button type="button" class="btn btn-sm btn-outline-danger" onclick="rimuoviRiga(this)"><i class="bi bi-trash"></i></button>
+            </td>
+            <td class="text-muted small font-monospace">({% trans 'Manual' %})</td>
+            <td>
+                <input list="lista_articoli" type="text" name="new_product_name" class="form-control form-control-sm" placeholder="{% trans 'Item name' %}" required>
+            </td>
+            <td>
+                <select name="new_category" class="form-select form-select-sm">
+                    <option value="">{% trans "-- Choose --" %}</option>
+                    {% for category in categories %}
+                        <option value="{{ category.id }}">{{ category.name }}</option>
+                    {% endfor %}
+                </select>
+            </td>
+            <td><input type="number" step="0.01" name="new_quantity" class="form-control form-control-sm text-center" value="1"></td>
+            <td><input type="number" step="0.01" name="new_unit_price" class="form-control form-control-sm" value="0.00"></td>
+            <td><input type="number" step="0.01" name="new_discount" class="form-control form-control-sm text-danger" value="0.00"></td>
+            <td><input type="number" step="0.01" name="new_price" class="form-control form-control-sm fw-bold" value="0.00"></td>
+        `;
+        tbody.appendChild(newRow);
+        newRow.querySelector('input[name="new_product_name"]').focus();
+    }
+
+    function rimuoviRiga(btn) {
+        btn.closest('tr').remove();
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const selectedStoreId = "{{ receipt.store_id|default:'' }}";
+        if (selectedStoreId) {
+            const storeSelect = document.getElementById('store-select');
+            if (storeSelect) {
+                storeSelect.value = selectedStoreId;
+            }
+        }
+    });
+</script>
+
+{% endblock %}

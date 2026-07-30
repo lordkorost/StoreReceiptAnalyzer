@@ -1,0 +1,86 @@
+{% extends "spese/base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "Categories" %} - AnalizzaScontrini{% endblock %}
+
+{% block content %}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0">
+        <i class="bi bi-tags"></i>
+        {% trans "Categories" %}
+    </h2>
+
+    <a href="{% url 'category_create' %}" class="btn btn-primary">
+        <i class="bi bi-plus-lg"></i>
+        {% trans "New category" %}
+    </a>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body p-0">
+
+        <div class="table-responsive">
+
+            <table class="table table-hover align-middle mb-0">
+
+                <thead class="table-light">
+                    <tr>
+                        <th>{% trans "Name" %}</th>
+                        <th>{% trans "Description" %}</th>
+                        <th class="text-end">{% trans "Actions" %}</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                {% for category in categories %}
+                    <tr>
+
+                        <td class="fw-semibold">
+                            {{ category.name }}
+                        </td>
+
+                        <td class="text-muted">
+                            {{ category.description|default:"-" }}
+                        </td>
+
+                        <td class="text-end">
+
+                            <a href="{% url 'category_edit' category.pk %}"
+                               class="btn btn-sm btn-outline-secondary"
+                               title="{% trans 'Edit' %}">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+
+                            <a href="{% url 'category_delete' category.pk %}"
+                               class="btn btn-sm btn-outline-danger"
+                               title="{% trans 'Delete' %}">
+                                <i class="bi bi-trash"></i>
+                            </a>
+
+                        </td>
+
+                    </tr>
+
+                {% empty %}
+
+                    <tr>
+                        <td colspan="3" class="text-center py-5 text-muted">
+                            <i class="bi bi-tags fs-1 d-block mb-2"></i>
+                            {% trans "No categories found." %}
+                        </td>
+                    </tr>
+
+                {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+</div>
+
+{% endblock %}

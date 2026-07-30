@@ -1,0 +1,206 @@
+{% load static %}
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% trans "Categorization in progress..." %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+    <style>
+        body { 
+            background-color: #f8f9fa; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            min-height: 100vh; 
+        }
+        .loading-card {
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+        .spinner { 
+            border: 6px solid #f3f3f3; 
+            border-top: 6px solid #0d6efd; 
+            border-radius: 50%; 
+            width: 60px; 
+            height: 60px; 
+            animation: spin 1.5s linear infinite; 
+            margin: 0 auto 20px; 
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+    <div class="card shadow loading-card p-4">
+        <h4 class="mb-3">
+            <i class="bi bi-tags text-primary"></i> {% trans "Categorization in progress..." %}
+        </h4>
+        
+        <div class="spinner" id="main-spinner"></div>
+        
+        <!-- Stato generale -->
+        <div id="status" class="text-muted mb-2">{% trans "Waiting for the worker..." %}</div>
+        
+        <!-- Step dettagliato -->
+        <div id="step" class="fw-bold text-primary mb-3" style="min-height: 24px;">
+            {{ task.step|default:"Inizializzazione..." }}
+        </div>
+        
+        <!-- Barra di progresso -->
+        <div class="progress mb-2" style="height: 12px;">
+            <div id="progress-bar" class="progress-bar progress-bar-striped progress-bar-animated bg-primary" 
+                 role="progressbar" style="width: {{ task.progress|default:0 }}%"></div>
+        </div>
+        <div id="progress-text" class="fw-bold">{{ task.progress|default:0 }}%</div>
+
+        <!-- ✅ PULSANTI DI AZIONE (Nascosti di default, mostrati dal JS in caso di errore) -->
+        <div class="mt-4">
+            <button id="retry-btn" class="btn btn-warning me-2" style="display: none;">
+                <i class="bi bi-arrow-clockwise"></i> {% trans "Try Again" %}
+            </button>
+            <button id="cancel-btn" class="btn btn-danger" style="display: none;">
+                <i class="bi bi-trash"></i> {% trans "Delete Receipt" %}
+            </button>
+        </div>
+    </div>
+<script src="{% static 'js/task-ws-manager.js' %}"></script>
+
+<!-- 2. Logica specifica per la pagina di Categorizzazione -->
+<script>
+    const taskId = "{{ task.id }}";
+    const scontrinoId = "{{ task.receipt.id }}";
+    const statoIniziale = "{{ task.status }}";
+
+    // Helper per gestire lo stato di fallimento (ora include i pulsanti!)
+    function handleFailedState(errorMsg) {
+        document.getElementById("status").innerHTML = `<span class="text-danger fw-bold">Errore: ${errorMsg}</span>`;
+        document.getElementById("step").innerText = "{% trans 'Processing failed' %}";
+        document.getElementById("progress-bar").classList.remove("bg-primary", "progress-bar-animated");
+        document.getElementById("progress-bar").classList.add("bg-danger");
+        
+  
+        document.getElementById("retry-btn").style.display = "block";
+        document.getElementById("cancel-btn").style.display = "block";
+    }
+
+    // Gestione stato iniziale
+    if (statoIniziale === "COMPLETED") {
+        document.getElementById("status").innerText = "{% trans 'Already completed! Redirecting...' %}";
+        document.getElementById("step").innerText = "{% trans 'Categorization complete' %}";
+        setTimeout(() => {
+            window.location.href = `/scontrini/scontrino/${scontrinoId}/categorie/`;
+        }, 500);
+    } 
+    else if (statoIniziale === "FAILED") {
+        handleFailedState("{{ task.error|escapejs }}");
+    } 
+    else {
+        // Se è in PENDING o PROCESSING, usiamo il Manager generico
+        const wsManager = new TaskWebSocketManager(taskId, statoIniziale, {
+            
+            onProcessing: (data) => {
+                document.getElementById("status").innerText = "{% trans 'Status:' %}" + data.status;
+                if (data.step) document.getElementById("{% trans 'Step' %}").innerText = data.step;
+                document.getElementById("progress-bar").style.width = data.progress + "%";
+                document.getElementById("progress-text").innerText = data.progress + "%";
+            },
+
+            onFailed: (data) => {
+                handleFailedState(data.errore || "{% trans 'Unknown error' %}");
+            },
+
+            onCompleted: (data) => {
+                document.getElementById("status").innerText = "{% trans 'Done! Redirecting...' %}";
+                document.getElementById("step").innerText = "{% trans 'Categorization complete' %}";
+                document.getElementById("progress-bar").classList.remove("bg-primary", "progress-bar-animated");
+                document.getElementById("progress-bar").classList.add("bg-success");
+                
+                setTimeout(() => {
+                    window.location.href = `/scontrini/scontrino/${scontrinoId}/categorie/`;
+                }, 1500);
+            },
+
+            onError: (err) => {
+                console.error("Errore WebSocket:", err);
+                document.getElementById("status").innerHTML = `<span class="text-danger">{% trans "WebSocket connection error"|escapejs %}</span>`;
+            }
+        });
+
+        wsManager.start();
+    }
+
+    // =========================================================
+    // LOGICA SPECIFICA DEI PULSANTI (Aggiunta ora)
+    // =========================================================
+    
+    // Pulsante Riprova
+    document.getElementById("retry-btn").addEventListener("click", async function() {
+        const btn = this;
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> {% trans "Restarting..."|escapejs %}';
+        
+        try {
+            const response = await fetch(`/scontrini/task/${taskId}/retry/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}', 
+                    'Content-Type': 'application/json',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
+            
+               if (response.ok) {
+                    setTimeout(() => { window.location.reload(); }, 500);
+                } else {
+                    // Usa virgolette doppie per alert/confirm e singole per il tag trans
+                    alert("{% trans 'Error restarting the task. Please retry manually.'|escapejs %}");
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="bi bi-arrow-clockwise"></i> {% trans "Retry Processing"|escapejs %}';
+                }
+            } catch (error) {
+                console.error("Errore fetch:", error);
+                alert("{% trans 'Connection error during restart.'|escapejs %}");
+                btn.disabled = false;
+                btn.innerHTML = '<i class="bi bi-arrow-clockwise"></i> {% trans "Retry Processing"|escapejs %}';
+            }
+            });
+
+            // Pulsante Annulla/Elimina
+            document.getElementById("cancel-btn").addEventListener("click", async function() {
+                if (!confirm("{% trans 'Do you want to delete this receipt?'|escapejs %}")) return;
+
+        
+        const btn = this;
+        btn.disabled = true;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm"></span> {% trans "Deletion..."|escapejs %}';
+
+        try {
+            const response = await fetch(`/scontrini/task/${taskId}/cancel/`, {
+                method: 'POST',
+                headers: {
+                    'X-CSRFToken': '{{ csrf_token }}',
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
+
+            if (response.ok) {
+                window.location.href = "/scontrini/upload/";
+            } else {
+                alert("{% trans 'Error while deleting'|escapejs %}");
+                btn.disabled = false;
+                btn.innerHTML = '<i class="bi bi-trash"></i> {% trans "Delete Receipt"|escapejs %}';
+            }
+        } catch (error) {
+            console.error("Errore fetch:", error);
+            alert("{% trans 'Connection error'|escapejs %}");
+            btn.disabled = false;
+            btn.innerHTML = '<i class="bi bi-trash"></i> {% trans "Delete Receipt"|escapejs %}';
+        }
+    });
+</script>
+</body>
+</html>

@@ -1,0 +1,65 @@
+services:
+  db:
+    image: postgres:15-alpine
+    env_file:
+      - .env.docker
+    environment:
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DB_USER} -d ${DB_NAME}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  redis:
+    image: redis:7-alpine
+    volumes:
+      - redis_data:/data
+
+  web:
+    build: .
+    command: >
+      sh -c "
+        cd /app/src/analizzascontrini/webui &&
+        python manage.py migrate --noinput &&
+        python manage.py collectstatic --noinput &&
+        daphne -b 0.0.0.0 -p 8000 core.asgi:application
+      "
+    env_file:
+      - .env.docker
+    ports:
+      - "${AS_PORT:-8000}:8000"
+    volumes:
+      - ./src/analizzascontrini/webui/media:/app/src/analizzascontrini/webui/media
+      - ./src/analizzascontrini/webui/static:/app/src/analizzascontrini/webui/static
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+
+  worker:
+    build: .
+    command: python -m analizzascontrini.scripts.worker
+    env_file:
+      - .env.docker
+    volumes:
+      - ./src/analizzascontrini/webui/media:/app/src/analizzascontrini/webui/media
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_started
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
+    restart: unless-stopped
+
+volumes:
+  postgres_data:
+  redis_data:

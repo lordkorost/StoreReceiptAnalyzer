@@ -1,0 +1,132 @@
+{% extends 'spese/base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Receipt History" %} - AnalizzaScontrini{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0"><i class="bi bi-clock-history"></i> {% trans "Receipt History" %}</h2>
+    <div>
+        <!-- ✅ Toggle per mostrare/nascondere i falliti -->
+        {% if show_all %}
+            <a href="{% url 'scontrino_list' %}" class="btn btn-outline-secondary btn-sm me-2">
+                <i class="bi bi-funnel"></i> {% trans "Hide failed" %}
+            </a>
+        {% else %}
+            {% if num_failed > 0 %}
+                <a href="?show_all=1" class="btn btn-outline-danger btn-sm me-2">
+                    <i class="bi bi-eye"></i> {% trans "Show failed" %} ({{ num_failed }})
+                </a>
+            {% endif %}
+        {% endif %}
+        
+        <!-- Bottone upload -->
+        <a href="{% url 'upload_scontrino' %}" class="btn btn-primary">
+            <i class="bi bi-plus-lg"></i> {% trans "Upload New" %}
+        </a>
+    </div>
+</div>
+
+<div class="card shadow-sm">
+    <div class="card-body p-0">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th>{% trans "Date" %}</th>
+                        <th>{% trans "Store" %}</th>
+                        <th class="text-end">{% trans "Total" %}</th>
+                        <th class="text-center">{% trans "Status" %}</th>
+                        <th class="text-end">{% trans "Actions" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for receipt in receipts %}
+                    <tr>
+                        <td>
+                            <div class="fw-bold">{{ receipt.receipt_date|date:"d/m/Y" }}</div>
+                            <small class="text-muted">{{ receipt.created_at|date:"H:i" }}</small>
+                        </td>
+                        <td>
+                            {{ receipt.store.name|default:receipt.ocr_store_name|default:_("Not specified") }}
+                        </td>
+                        <td class="text-end fw-bold text-primary">
+                            {{ receipt.total }} €
+                        </td>
+                        <td class="text-center">
+                            {% if receipt.confirmed %}
+                                <span class="badge bg-success">{% trans "Confirmed" %}</span>
+                            {% else %}
+                                <span class="badge bg-warning text-dark">{% trans "Draft" %}</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-end">
+                            <!-- Azione: Vedi Dettagli -->
+                            {% comment %} <a href="{% url 'receipt_summary' pk=receipt.id %}" class="btn btn-sm btn-outline-primary" title="{% trans 'View Details' %}">
+                                <i class="bi bi-eye"></i>
+                            </a>
+                            
+                            <!-- Azione: Modifica -->
+                            <a href="{% url 'receipt_edit' pk=receipt.id %}" class="btn btn-sm btn-outline-secondary" title="{% trans 'Edit' %}">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            
+                            <!-- Azione: Elimina -->
+                            <form action="{% url 'scontrino_delete' pk=receipt.id %}" method="POST" class="d-inline" 
+                                  onsubmit="return confirm('{% trans "Are you sure you want to delete this receipt and all associated data?" %}');">
+                                {% csrf_token %}
+                                <button type="submit" class="btn btn-sm btn-outline-danger" title="{% trans 'Delete' %}">
+                                    <i class="bi bi-trash"></i>
+                                </button>
+                            </form> {% endcomment %}
+                            {% if receipt.confirmed %}
+        <!-- Dettagli -->
+        <a href="{% url 'receipt_summary' pk=receipt.id %}"
+           class="btn btn-sm btn-outline-primary"
+           title="{% trans 'View Details' %}">
+            <i class="bi bi-eye"></i>
+        </a>
+
+        <!-- Modifica -->
+        <a href="{% url 'receipt_edit' pk=receipt.id %}"
+           class="btn btn-sm btn-outline-secondary"
+           title="{% trans 'Edit' %}">
+            <i class="bi bi-pencil"></i>
+        </a>
+    {% else %}
+        <!-- Continua elaborazione -->
+        <a href="{% url 'review_scontrino' pk=receipt.id %}"
+           class="btn btn-sm btn-warning"
+           title="{% trans 'Continue processing' %}">
+            <i class="bi bi-play-fill"></i>
+        </a>
+    {% endif %}
+
+    <!-- Elimina -->
+    <form action="{% url 'scontrino_delete' pk=receipt.id %}"
+          method="POST"
+          class="d-inline"
+          onsubmit="return confirm('{% trans "Are you sure you want to delete this receipt and all associated data?" %}');">
+        {% csrf_token %}
+        <button type="submit"
+                class="btn btn-sm btn-outline-danger"
+                title="{% trans 'Delete' %}">
+            <i class="bi bi-trash"></i>
+        </button>
+    </form>
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center py-5 text-muted">
+                            <i class="bi bi-receipt fs-1 d-block mb-2"></i>
+                            {% trans "No receipts found." %} <a href="{% url 'upload_scontrino' %}">{% trans "Upload the first one!" %}</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

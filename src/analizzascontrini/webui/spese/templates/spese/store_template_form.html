@@ -1,0 +1,239 @@
+{% extends "spese/base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Store Template" %}{% endblock %}
+
+{% block content %}
+
+
+<div class="container py-4">
+
+    <h2 class="mb-4">
+        <i class="bi bi-shop"></i> 
+        {% if object %}{% trans "Edit:" %} {{ object.name }}{% else %}{% trans "New Store" %}{% endif %}
+    </h2>
+
+    <form method="post" novalidate>
+        {% csrf_token %}
+
+        {% if form.errors %}
+            <div class="alert alert-danger">
+                <strong>{% trans "Correct the following errors:" %}</strong>
+                <ul class="mb-0 mt-2">
+                    {% for field, errors in form.errors.items %}
+                        {% for error in errors %}
+                            <li><strong>{{ field }}:</strong> {{ error }}</li>
+                        {% endfor %}
+                    {% endfor %}
+                </ul>
+            </div>
+        {% endif %}
+
+        <!-- SEZIONE 1: IDENTIFICAZIONE -->
+        <div class="card shadow mb-4">
+            <div class="card-header bg-primary text-white">
+                <i class="bi bi-tag"></i> {% trans "General Information" %}
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">{% trans "Name" %} <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control {% if form.name.errors %}is-invalid{% endif %}" 
+                               name="name" value="{{ form.name.value|default:'' }}" required>
+                        <small class="text-muted">{% trans "Display name (e.g., Conad)" %}</small>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">{% trans "Keyword" %} <span class="text-danger">*</span></label>
+                        <input type="text" class="form-control {% if form.keyword.errors %}is-invalid{% endif %}" 
+                               name="keyword" value="{{ form.keyword.value|default:'' }}" required>
+                        <small class="text-muted">{% trans "Word present in the OCR (e.g., DUEPI)" %}</small>
+                    </div>
+                </div>
+                <div class="form-check mt-3">
+                    <input type="checkbox" class="form-check-input" name="repeated_items" id="repeated_items"
+                           {% if form.repeated_items.value %}checked{% endif %}>
+                    <label class="form-check-label" for="repeated_items">
+                        <strong>{% trans "Duplicate items allowed" %}</strong> {% trans "Allow the same item to appear multiple times" %}
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- SEZIONE 2: PROMPT LLM -->
+        <div class="card shadow mb-4">
+            <div class="card-header bg-info text-white">
+                <i class="bi bi-robot"></i> {% trans "LLM Prompts" %}
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label class="form-label fw-bold">{% trans "Article extraction instructions (Not currently in use)" %}</label>
+                    <textarea class="form-control" name="prompt_instruction" rows="4" 
+                              placeholder="es. 'articoli con asterisco hanno prezzo pieno', 'ignora righe Kg x E.'">{{ form.prompt_instruction.value|default:'' }}</textarea>
+                    <small class="text-muted">{% trans "Specific rules for extracting items from this supermarket." %}</small>
+                </div>
+            </div>
+        </div>
+
+        <!-- SEZIONE 3: PARSING REGEX E NORMALIZZAZIONE -->
+        <div class="card shadow mb-4">
+            <div class="card-header bg-secondary text-white">
+                <i class="bi bi-code-slash"></i> {% trans "OCR Parsing (Regex and Normalization)" %}
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">{% trans "Quantity Regex"%}</label>
+                        <input type="text" class="form-control font-monospace" name="quantity_regex" 
+                               value="{{ form.quantity_regex.value|default:'' }}"
+                               placeholder="^(\d+)\s*PZ\s*x\s*E\.?\s*([\d,]+)$">
+                        <small class="text-muted">{% trans "Pattern to capture lines like 2 PCS x €6.99" %}</small>
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-bold">{% trans "Discount Regex" %}</label>
+                        <input type="text" class="form-control font-monospace" name="discount_regex" 
+                               value="{{ form.discount_regex.value|default:'' }}"
+                               placeholder="Taglio Prezzo|SCONTO OFFERTA">
+                        <small class="text-muted">{% trans "Pattern for identifying discount lines." %}</small>
+                    </div>
+                </div>
+                
+                <div class="mb-3">
+                    <label class="form-label fw-bold">{% trans "Remove VAT Pattern" %}</label>
+                    <input type="text" class="form-control font-monospace" name="remove_vat_pattern" 
+                           value="{{ form.remove_vat_pattern.value|default:'' }}"
+                           placeholder="\s+VI\*|\s+\d+%">
+                    <small class="text-muted">{% trans "Regex to remove strings like VI* or VAT percentages from lines." %}</small>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">{% trans "Lines to Ignore (JSON)" %}</label>
+                    <textarea class="form-control font-monospace" name="ignored_lines" rows="3"
+                              placeholder='["VI*", "Taglio Prezzo", "Accumulo Punti"]'>{{ form.ignored_lines.value|default:"[]" }}</textarea>
+                    <small class="text-muted">{% trans "JSON list of patterns to skip during parsing." %}</small>
+                    {% if form.ignored_lines.errors %}
+                        <div class="text-danger small mt-1">{{ form.ignored_lines.errors.0 }}</div>
+                    {% endif %}
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-bold">{% trans "Store Keywords (JSON)" %}</label>
+                    <textarea class="form-control font-monospace" name="store_keywords" rows="3"
+                              placeholder='["duepi", "supermercato duepi"]'>{{ form.store_keywords.value|default:"[]" }}</textarea>
+                    <small class="text-muted">{% trans "JSON list of keywords to identify the store name in the first lines of the OCR." %}</small>
+                    {% if form.store_keywords.errors %}
+                        <div class="text-danger small mt-1">{{ form.store_keywords.errors.0 }}</div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+        <!-- PULSANTI -->
+        <!-- PULSANTI -->
+<div class="d-flex justify-content-between">
+    <a href="{% url 'supermercato_list' %}" class="btn btn-secondary">
+        <i class="bi bi-x-circle"></i> {% trans "Cancel" %}
+    </a>
+    <div class="d-flex gap-2">
+        <!-- Bottone Salva normale -->
+        <button type="submit" name="action" value="save" class="btn btn-success btn-lg px-4">
+            <i class="bi bi-check-circle"></i> {% trans "Save" %}
+        </button>
+        
+        <!-- Bottone Salva e Testa (visibile solo se l'oggetto esiste già) -->
+        {% if object %}
+            <button type="submit" name="action" value="save_and_test" class="btn btn-warning btn-lg px-4">
+                <i class="bi bi-flask"></i> {% trans "Save and Test" %}
+            </button>
+        {% else %}
+            <button type="button" class="btn btn-warning btn-lg px-4" disabled title="Devi prima salvare il supermercato per poterlo testare">
+                <i class="bi bi-flask"></i> {% trans "Save and Test" %}
+            </button>
+        {% endif %}
+    </div>
+</div>
+
+    </form>
+
+</div>
+
+<!-- MODAL TEST SCONTRINO -->
+{% if object %}
+<div class="modal fade" id="modalTestScontrino" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <form method="post" action="{% url 'test_supermercato_start' pk=object.pk %}" enctype="multipart/form-data">
+                {% csrf_token %}
+                
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title">
+                        <i class="bi bi-flask"></i> {% trans "Test Configuration:" %} {{ object.name }}
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                
+                <div class="modal-body">
+                    <p class="text-muted mb-4">
+                        {% trans "Choose a receipt image from the library or upload a new one." %}
+                        {% trans "It will be used to test the current configuration." %}
+                    </p>
+                    
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">
+                            <i class="bi bi-folder2-open"></i> {% trans "Use the receipt from the bookstore." %}
+                        </label>
+                        <!-- CAMBIATO: name="esistente" -> name="existing_file" -->
+                        <select name="existing_file" class="form-select">
+                            <option value="">{% trans "-- Select an existing file --" %}</option>
+                            {% for file in test_files %}
+                                <option value="{{ file.name }}">{{ file.name }} ({{ file.size_kb }} KB)</option>
+                            {% empty %}
+                                <option value="" disabled>{% trans "No files available in /media/test/" %}</option>
+                            {% endfor %}
+                        </select>
+                        <small class="text-muted">{% trans "The files are uploaded to the folder." %} <code>/media/test/</code></small>
+                    </div>
+                    
+                    <div class="text-center text-muted my-3">
+                        <strong>{% trans "- or -" %}</strong>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label class="form-label fw-bold">
+                            <i class="bi bi-cloud-upload"></i> {% trans "Upload new receipt" %}
+                        </label>
+                        <!-- CAMBIATO: name="nuovo" -> name="new_file" -->
+                        <input type="file" 
+                               name="new_file" 
+                               class="form-control" 
+                               accept="image/*">
+                        <small class="text-muted">{% trans "It will be saved in" %} <code>/media/test/</code> {% trans "and reused in future tests" %}</small>
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="bi bi-x-circle"></i> {% trans "Cancel" %}
+                    </button>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="bi bi-play-fill"></i> {% trans "Start test" %}
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% if open_modal %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var modalEl = document.getElementById('modalTestScontrino');
+        if (modalEl) {
+            var modal = new bootstrap.Modal(modalEl);
+            modal.show();
+        }
+    });
+</script>
+{% endif %}
+
+
+{% include "spese/components/chat_assistente.html" %}
+{% endblock %}

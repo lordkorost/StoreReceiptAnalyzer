@@ -1,0 +1,16 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "analizzascontrini"
+version = "1.0.0"
+description = "Sistema di analisi scontrini con OCR e LLM"
+requires-python = ">=3.10"
+
+[project.scripts]
+as-worker = "analizzascontrini.cli:run_worker"
+as-webui = "analizzascontrini.cli:run_webui"
+
+[tool.setuptools.packages.find]
+where = ["src"]

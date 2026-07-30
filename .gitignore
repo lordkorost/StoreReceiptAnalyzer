@@ -1,0 +1,86 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Virtual environments
+venv_ocr
+venv/
+ENV/
+env/
+.venv
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Django
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+/media
+/staticfiles
+/media/scontrini
+*.png
+# Environment variables
+.env
+.env.local
+.env.*.local
+.env.docker
+
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+#testing local
+defaults_old.py
+normalizza.py
+normalizza2.py
+test1.py
+testdb.py
+testpaddle.py
+testqvl.py
+worker2.py
+worker3.py
+dati_backup.json
+templates_only.json
+src/analizzascontrini/webui/static/*
+src/analizzascontrini/webui/media/*
+src/analizzascontrini/webui/dati_iniziali.json
+worker_helpers_it.py
+worker_it.py
+views_it.py
+models_it.py
+nginx/
+README3.md

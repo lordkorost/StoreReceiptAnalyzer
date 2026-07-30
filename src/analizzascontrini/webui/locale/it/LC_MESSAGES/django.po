@@ -1,0 +1,1477 @@
+# SOME DESCRIPTIVE TITLE.
+# Copyright (C) YEAR THE PACKAGE'S COPYRIGHT HOLDER
+# This file is distributed under the same license as the PACKAGE package.
+# FIRST AUTHOR <EMAIL@ADDRESS>, YEAR.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: PACKAGE VERSION\n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2026-07-28 00:12+0000\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: Italiano <it@li.org>\n"
+"Language: it\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: spese/forms.py:25 spese/templates/spese/store_template_form.html:111
+msgid "JSON list of patterns to skip during parsing."
+msgstr "Elenco JSON di pattern da saltare durante l'analisi."
+
+#: spese/forms.py:30
+msgid "JSON list of keywords to identify the store name."
+msgstr "Elenco JSON di parole chiave per identificare il nome del negozio."
+
+#: spese/models.py:15 spese/models.py:50 spese/models.py:159
+#: spese/templates/spese/category_list.html:29
+#: spese/templates/spese/store_template_form.html:39
+#: spese/templates/spese/store_template_list.html:25
+msgid "Name"
+msgstr "Nome"
+
+#: spese/models.py:21 spese/templates/spese/category_list.html:30
+msgid "Description"
+msgstr "Descrizione"
+
+#: spese/models.py:23
+msgid "Optional description explaining what belongs to this category"
+msgstr "Descrizione opzionale che spiega cosa appartiene a questa categoria"
+
+#: spese/models.py:28 spese/models.py:168
+#: spese/templates/spese/edit_receipt.html:72
+#: spese/templates/spese/receipt_detail.html:213
+#: spese/templates/spese/review_category.html:52
+#: spese/templates/spese/test_results.html:108
+msgid "Category"
+msgstr "Categoria"
+
+#: spese/models.py:29 spese/templates/spese/base.html:75
+#: spese/templates/spese/category_list.html:4
+#: spese/templates/spese/category_list.html:11
+msgid "Categories"
+msgstr "Categorie"
+
+#: spese/models.py:55 spese/templates/spese/store_template_form.html:45
+#: spese/templates/spese/store_template_list.html:26
+msgid "Keyword"
+msgstr "Parola chiave"
+
+#: spese/models.py:57
+msgid ""
+"Keyword used to identify the store from OCR (e.g. 'DUEPI', 'CONAD', 'COOP')"
+msgstr ""
+"Parola chiave usata per identificare il negozio dall'OCR (ad esempio "
+"'DUEPI', 'CONAD', 'COOP')"
+
+#: spese/models.py:69
+msgid "Prompt instructions"
+msgstr "Istruzioni prompt"
+
+#: spese/models.py:71
+msgid "Specific rules for extracting receipt items for this store"
+msgstr ""
+"Regole specifiche per estrarre le voci della ricevuta per questo negozio"
+
+#: spese/models.py:84
+msgid "Quantity regex"
+msgstr "Regex della quantità"
+
+#: spese/models.py:90
+msgid "Ignored lines"
+msgstr "Righe ignorate"
+
+#: spese/models.py:97
+msgid "Discount regex"
+msgstr "Regex degli sconti"
+
+#: spese/models.py:99
+msgid ""
+"Regex used to identify discount lines (e.g. 'Taglio Prezzo|SCONTO OFFERTA')"
+msgstr ""
+"Regex usata per identificare le righe di sconto (ad esempio 'Taglio Prezzo|"
+"SCONTO OFFERTA')"
+
+#: spese/models.py:108
+msgid "VAT removal pattern"
+msgstr "Pattern per rimuovere l'IVA"
+
+#: spese/models.py:110
+msgid "Regex used to remove VAT markers (e.g. '\\s+VI\\*' or '\\s+\\d+%')"
+msgstr ""
+"Regex usata per rimuovere i marcatori IVA (ad esempio '\\s+VI\\*' o '\\s+\\d+"
+"%')"
+
+#: spese/models.py:118
+msgid "Store keywords"
+msgstr "Parole chiave del negozio"
+
+#: spese/models.py:120
+msgid ""
+"List of keywords used to identify the store name (e.g. ['duepi', 'ipercoop'])"
+msgstr ""
+"Elenco di parole chiave usate per identificare il nome del negozio (ad "
+"esempio ['duepi', 'ipercoop'])"
+
+#: spese/models.py:131
+msgid "Repeated items"
+msgstr "Articoli ripetuti"
+
+#: spese/models.py:133
+msgid ""
+"If enabled, the store may have the same item multiple times (e.g. deli "
+"counter items)"
+msgstr ""
+"Se abilitato, il negozio può avere lo stesso articolo più volte (ad esempio "
+"articoli del banco gastronomia)"
+
+#: spese/models.py:139
+msgid "Store template"
+msgstr "Template del negozio"
+
+#: spese/models.py:140
+msgid "Store templates"
+msgstr "Template dei negozi"
+
+#: spese/models.py:175
+msgid "Brand"
+msgstr "Marca"
+
+#: spese/models.py:179 spese/models.py:214 spese/models.py:320
+msgid "Product"
+msgstr "Prodotto"
+
+#: spese/models.py:180
+msgid "Products"
+msgstr "Prodotti"
+
+#: spese/models.py:203 spese/models.py:261
+#: spese/templates/spese/receipt_list.html:37
+#: spese/templates/spese/review_category.html:26
+#: spese/templates/spese/test_results.html:38
+#: spese/templates/spese/upload.html:29
+msgid "Store"
+msgstr "Negozio"
+
+#: spese/models.py:208
+msgid "Receipt text"
+msgstr "Testo della ricevuta"
+
+#: spese/models.py:218
+msgid "Product dictionary entry"
+msgstr "Voce del dizionario dei prodotti"
+
+#: spese/models.py:219
+msgid "Product dictionary entries"
+msgstr "Voci del dizionario dei prodotti"
+
+#: spese/models.py:240 spese/models.py:632
+msgid "Created at"
+msgstr "Creato il"
+
+#: spese/models.py:246
+msgid "Receipt date"
+msgstr "Data della ricevuta"
+
+#: spese/models.py:253
+msgid "Store name from OCR"
+msgstr "Nome del negozio dall'OCR"
+
+#: spese/models.py:266
+msgid "Image"
+msgstr "Immagine"
+
+#: spese/models.py:273 spese/templates/spese/edit_receipt.html:48
+#: spese/templates/spese/receipt_list.html:38
+#: spese/templates/spese/review_category.html:34
+#: spese/templates/spese/test_results.html:173
+msgid "Total"
+msgstr "Totale"
+
+#: spese/models.py:278 spese/models.py:642
+#: spese/templates/spese/receipt_list.html:58
+msgid "Confirmed"
+msgstr "Confermato"
+
+#: spese/models.py:282 spese/templates/spese/receipt_detail.html:73
+#: spese/templates/spese/receipt_detail.html:276
+msgid "Receipt"
+msgstr "Ricevuta"
+
+#: spese/models.py:283 spese/templates/spese/store_template_list.html:27
+msgid "Receipts"
+msgstr "Ricevute"
+
+#: spese/models.py:288
+msgid "Unknown"
+msgstr "Sconosciuto"
+
+#: spese/models.py:294
+msgid "Date not specified"
+msgstr "Data non specificata"
+
+#: spese/models.py:312
+msgid "Original receipt text"
+msgstr "Testo originale della ricevuta"
+
+#: spese/models.py:327
+msgid "Quantity"
+msgstr "Quantità"
+
+#: spese/models.py:335
+msgid "Unit price"
+msgstr "Prezzo unitario"
+
+#: spese/models.py:341 spese/templates/spese/review_category.html:51
+msgid "Price"
+msgstr "Prezzo"
+
+#: spese/models.py:348 spese/templates/spese/edit_receipt.html:75
+#: spese/templates/spese/receipt_detail.html:216
+#: spese/templates/spese/test_results.html:111
+msgid "Discount"
+msgstr "Sconto"
+
+#: spese/models.py:352
+msgid "Receipt item"
+msgstr "Voce della ricevuta"
+
+#: spese/models.py:353
+msgid "Receipt items"
+msgstr "Voci della ricevuta"
+
+#: spese/models.py:491
+msgid ""
+"Ollama URL (e.g. http://192.168.1.45:11434). Leave empty to use the system "
+"default."
+msgstr ""
+"URL di Ollama (ad es. http://192.168.1.45:11434). Lascia vuoto per usare il "
+"valore predefinito di sistema."
+
+#: spese/models.py:544
+msgid "User AI configuration"
+msgstr "Configurazione IA dell'utente"
+
+#: spese/models.py:545
+msgid "User AI configurations"
+msgstr "Configurazioni IA dell'utente"
+
+#: spese/models.py:554
+msgid "Pending"
+msgstr "In attesa"
+
+#: spese/models.py:555
+msgid "Processing"
+msgstr "In elaborazione"
+
+#: spese/models.py:556 spese/templates/spese/test_results.html:45
+msgid "Completed"
+msgstr "Completato"
+
+#: spese/models.py:557 spese/templates/spese/ai_config_detail.html:26
+#: spese/templates/spese/ai_config_detail.html:163
+#: spese/templates/spese/test_results.html:47
+msgid "Failed"
+msgstr "Fallito"
+
+#: spese/models.py:561
+msgid "OCR and raw text extraction"
+msgstr "OCR ed estrazione del testo grezzo"
+
+#: spese/models.py:562
+msgid "LLM category assignment"
+msgstr "Assegnazione categoria LLM"
+
+#: spese/models.py:563
+msgid "Store template test"
+msgstr "Test del template del negozio"
+
+#: spese/models.py:564
+msgid "Ollama connection and model check"
+msgstr "Controllo connessione e modello Ollama"
+
+#: spese/models.py:565
+msgid "Assistant chat"
+msgstr "Chat assistente"
+
+#: spese/models.py:593
+msgid "Task type"
+msgstr "Tipo di attività"
+
+#: spese/models.py:600 spese/templates/spese/receipt_list.html:39
+#: spese/templates/spese/test_results.html:43
+msgid "Status"
+msgstr "Stato"
+
+#: spese/models.py:607
+msgid "Current step"
+msgstr "Passaggio corrente"
+
+#: spese/models.py:613 spese/templates/spese/ai_config_detail.html:107
+#: spese/templates/spese/test_results.html:52
+msgid "Error"
+msgstr "Errore"
+
+#: spese/models.py:618
+msgid "Progress"
+msgstr "Avanzamento"
+
+#: spese/models.py:624
+msgid "Data"
+msgstr "Dati"
+
+#: spese/models.py:626
+msgid "Debug logs, results and other task-related data"
+msgstr "Log di debug, risultati e altri dati relativi all'attività"
+
+#: spese/models.py:637
+msgid "Updated at"
+msgstr "Aggiornato il"
+
+#: spese/models.py:644
+msgid "True if the task result has been confirmed by the user"
+msgstr "Vero se il risultato dell'attività è stato confermato dall'utente"
+
+#: spese/models.py:649
+msgid "Task"
+msgstr "Attività"
+
+#: spese/models.py:650
+msgid "Tasks"
+msgstr "Attività"
+
+#: spese/templates/spese/ai_config_detail.html:3
+#: spese/templates/spese/ai_config_detail.html:9
+msgid "AI Settings"
+msgstr "Impostazioni IA"
+
+#: spese/templates/spese/ai_config_detail.html:12
+#: spese/templates/spese/category_list.html:52
+#: spese/templates/spese/receipt_detail.html:55
+#: spese/templates/spese/receipt_list.html:70
+msgid "Edit"
+msgstr "Modifica"
+
+#: spese/templates/spese/ai_config_detail.html:15
+msgid "Back"
+msgstr "Indietro"
+
+#: spese/templates/spese/ai_config_detail.html:23
+msgid "Connection Status and Models"
+msgstr "Stato della connessione e modelli"
+
+#: spese/templates/spese/ai_config_detail.html:25
+msgid "Verified"
+msgstr "Verificato"
+
+#: spese/templates/spese/ai_config_detail.html:27
+#: spese/templates/spese/ai_config_detail.html:156
+msgid "Check in progress..."
+msgstr "Controllo in corso..."
+
+#: spese/templates/spese/ai_config_detail.html:49
+#: spese/templates/spese/ai_config_update.html:49
+msgid "OCR Model"
+msgstr "Modello OCR"
+
+#: spese/templates/spese/ai_config_detail.html:64
+#: spese/templates/spese/ai_config_update.html:79
+msgid "Analysis Model"
+msgstr "Modello di analisi"
+
+#: spese/templates/spese/ai_config_detail.html:78
+#: spese/templates/spese/ai_config_update.html:109
+msgid "Categorization Model"
+msgstr "Modello di categorizzazione"
+
+#: spese/templates/spese/ai_config_detail.html:92
+#: spese/templates/spese/ai_config_update.html:139
+msgid "Chat Model"
+msgstr "Modello chat"
+
+#: spese/templates/spese/ai_config_detail.html:116
+msgid "Prompts"
+msgstr "Prompt"
+
+#: spese/templates/spese/ai_config_detail.html:120
+#: spese/templates/spese/ai_config_update.html:181
+msgid "OCR Prompt"
+msgstr "Prompt OCR"
+
+#: spese/templates/spese/ai_config_detail.html:122
+#: spese/templates/spese/ai_config_detail.html:127
+#: spese/templates/spese/ai_config_detail.html:132
+msgid "(System default)"
+msgstr "(Predefinito di sistema)"
+
+#: spese/templates/spese/ai_config_detail.html:125
+#: spese/templates/spese/ai_config_update.html:185
+msgid "Analysis Prompt"
+msgstr "Prompt di analisi"
+
+#: spese/templates/spese/ai_config_detail.html:130
+#: spese/templates/spese/ai_config_update.html:189
+msgid "Categorization Prompt"
+msgstr "Prompt di categorizzazione"
+
+#: spese/templates/spese/ai_config_detail.html:172
+msgid "Completed! Refreshing..."
+msgstr "Completato! Aggiornamento..."
+
+#: spese/templates/spese/ai_config_detail.html:186
+#: spese/templates/spese/loading_category.html:199
+msgid "Connection error"
+msgstr "Errore di connessione"
+
+#: spese/templates/spese/ai_config_detail.html:194
+msgid "ERROR: task-ws-manager.js was not loaded correctly."
+msgstr "ERRORE: task-ws-manager.js non è stato caricato correttamente."
+
+#: spese/templates/spese/ai_config_update.html:3
+#: spese/templates/spese/ai_config_update.html:9
+msgid "Edit AI Settings"
+msgstr "Modifica impostazioni IA"
+
+#: spese/templates/spese/ai_config_update.html:11
+#: spese/templates/spese/ai_config_update.html:196
+#: spese/templates/spese/category_confirm_delete.html:37
+#: spese/templates/spese/category_form.html:46
+#: spese/templates/spese/edit_receipt.html:133
+#: spese/templates/spese/store_template_form.html:133
+#: spese/templates/spese/store_template_form.html:214
+#: spese/templates/spese/test_results.html:279
+msgid "Cancel"
+msgstr "Annulla"
+
+#: spese/templates/spese/ai_config_update.html:30
+msgid "Connection and Models"
+msgstr "Connessione e modelli"
+
+#: spese/templates/spese/ai_config_update.html:32
+msgid "Test Settings"
+msgstr "Impostazioni di test"
+
+#: spese/templates/spese/ai_config_update.html:53
+#: spese/templates/spese/ai_config_update.html:83
+#: spese/templates/spese/ai_config_update.html:113
+#: spese/templates/spese/ai_config_update.html:143
+msgid "Click 'Test' to load models"
+msgstr "Clicca su 'Test' per caricare i modelli"
+
+#: spese/templates/spese/ai_config_update.html:66
+#: spese/templates/spese/ai_config_update.html:96
+#: spese/templates/spese/ai_config_update.html:126
+#: spese/templates/spese/ai_config_update.html:156
+#: spese/templates/spese/ai_config_update.html:361
+msgid "not available"
+msgstr "non disponibile"
+
+#: spese/templates/spese/ai_config_update.html:175
+msgid "Custom Prompts"
+msgstr "Prompt personalizzati"
+
+#: spese/templates/spese/ai_config_update.html:178
+msgid "Leave blank to use the default system prompts. Use"
+msgstr "Lascia vuoto per usare i prompt di sistema predefiniti. Usa"
+
+#: spese/templates/spese/ai_config_update.html:178
+msgid "as placeholder"
+msgstr "come segnaposto"
+
+#: spese/templates/spese/ai_config_update.html:198
+msgid "Save Settings"
+msgstr "Salva impostazioni"
+
+#: spese/templates/spese/ai_config_update.html:267
+msgid "Error create task"
+msgstr "Errore durante la creazione dell'attività"
+
+#: spese/templates/spese/ai_config_update.html:273
+msgid "Error connection:"
+msgstr "Errore di connessione:"
+
+#: spese/templates/spese/ai_config_update.html:288
+msgid "Verifica fallita"
+msgstr "Verifica fallita"
+
+#: spese/templates/spese/ai_config_update.html:323
+msgid "Impossibile raggiungere Ollama."
+msgstr "Impossibile raggiungere Ollama."
+
+#: spese/templates/spese/ai_config_update.html:347
+msgid "-- Select a model --"
+msgstr "-- Seleziona un modello --"
+
+#: spese/templates/spese/ai_config_update.html:372
+msgid "Errore nel recupero dati:"
+msgstr "Errore nel recupero dati:"
+
+#: spese/templates/spese/ai_config_update.html:382
+msgid "Errore di connessione WebSocket"
+msgstr "Errore di connessione WebSocket"
+
+#: spese/templates/spese/base.html:8
+msgid "Receipt Analyzer"
+msgstr "Analizzatore di ricevute"
+
+#: spese/templates/spese/base.html:24 spese/templates/spese/base.html:126
+msgid "ReceiptAnalyzer"
+msgstr "ReceiptAnalyzer"
+
+#: spese/templates/spese/base.html:36
+msgid "Upload"
+msgstr "Carica"
+
+#: spese/templates/spese/base.html:42 spese/templates/spese/receipt_list.html:4
+#: spese/templates/spese/receipt_list.html:8
+msgid "Receipt History"
+msgstr "Cronologia ricevute"
+
+#: spese/templates/spese/base.html:48
+msgid "Report & Stats"
+msgstr "Report e statistiche"
+
+#: spese/templates/spese/base.html:54
+msgid "Stores"
+msgstr "Negozi"
+
+#: spese/templates/spese/base.html:69
+msgid "Settings"
+msgstr "Impostazioni"
+
+#: spese/templates/spese/base.html:82
+msgid "Admin Panel"
+msgstr "Pannello di amministrazione"
+
+#: spese/templates/spese/base.html:93
+msgid "Logout"
+msgstr "Disconnetti"
+
+#: spese/templates/spese/category_confirm_delete.html:16
+msgid "Delete category"
+msgstr "Elimina categoria"
+
+#: spese/templates/spese/category_confirm_delete.html:24
+#, fuzzy, python-format
+#| msgid ""
+#| "\n"
+#| "                    Are you sure you want to delete \"%(name)s\"?\n"
+#| "                    "
+msgid "Are you sure you want to delete \"%(name)s\"?"
+msgstr "Sei sicuro di voler eliminare \"%(name)s\"?"
+
+#: spese/templates/spese/category_confirm_delete.html:43
+#: spese/templates/spese/category_list.html:58
+#: spese/templates/spese/receipt_list.html:78
+msgid "Delete"
+msgstr "Elimina"
+
+#: spese/templates/spese/category_form.html:6
+#: spese/templates/spese/category_form.html:25
+msgid "Edit category"
+msgstr "Modifica categoria"
+
+#: spese/templates/spese/category_form.html:8
+#: spese/templates/spese/category_form.html:28
+#: spese/templates/spese/category_list.html:16
+msgid "New category"
+msgstr "Nuova categoria"
+
+#: spese/templates/spese/category_form.html:51
+#: spese/templates/spese/store_template_form.html:138
+msgid "Save"
+msgstr "Salva"
+
+#: spese/templates/spese/category_list.html:31
+#: spese/templates/spese/receipt_list.html:40
+#: spese/templates/spese/store_template_list.html:30
+msgid "Actions"
+msgstr "Azioni"
+
+#: spese/templates/spese/category_list.html:71
+msgid "No categories found."
+msgstr "Nessuna categoria trovata."
+
+#: spese/templates/spese/edit_receipt.html:4
+#: spese/templates/spese/edit_receipt.html:8
+msgid "Edit Receipt"
+msgstr "Modifica ricevuta"
+
+#: spese/templates/spese/edit_receipt.html:10
+msgid "Back to Summary"
+msgstr "Torna al riepilogo"
+
+#: spese/templates/spese/edit_receipt.html:20
+#: spese/templates/spese/receipt_detail.html:91
+msgid "General Data"
+msgstr "Dati generali"
+
+#: spese/templates/spese/edit_receipt.html:25
+#: spese/templates/spese/receipt_detail.html:100
+msgid "Store (OCR)"
+msgstr "Negozio (OCR)"
+
+#: spese/templates/spese/edit_receipt.html:33
+#: spese/templates/spese/receipt_detail.html:96
+msgid "Mapped Store"
+msgstr "Negozio mappato"
+
+#: spese/templates/spese/edit_receipt.html:35
+msgid "-- Not specified --"
+msgstr "-- Non specificato --"
+
+#: spese/templates/spese/edit_receipt.html:44
+msgid "Receipt Date"
+msgstr "Data ricevuta"
+
+#: spese/templates/spese/edit_receipt.html:57
+#: spese/templates/spese/receipt_detail.html:206
+msgid "Item Details"
+msgstr "Dettagli voce"
+
+#: spese/templates/spese/edit_receipt.html:59
+msgid "Add Item"
+msgstr "Aggiungi voce"
+
+#: spese/templates/spese/edit_receipt.html:69
+msgid "Del."
+msgstr "Elim."
+
+#: spese/templates/spese/edit_receipt.html:70
+#: spese/templates/spese/test_results.html:106
+msgid "OCR Text"
+msgstr "Testo OCR"
+
+#: spese/templates/spese/edit_receipt.html:71
+msgid "Item Name"
+msgstr "Nome voce"
+
+#: spese/templates/spese/edit_receipt.html:73
+#: spese/templates/spese/receipt_detail.html:214
+#: spese/templates/spese/test_results.html:109
+msgid "Qty"
+msgstr "Qtà"
+
+#: spese/templates/spese/edit_receipt.html:74
+#: spese/templates/spese/receipt_detail.html:215
+#: spese/templates/spese/test_results.html:110
+msgid "Unit Price"
+msgstr "Prezzo unitario"
+
+#: spese/templates/spese/edit_receipt.html:76
+#: spese/templates/spese/receipt_detail.html:217
+#: spese/templates/spese/test_results.html:112
+msgid "Total Price"
+msgstr "Prezzo totale"
+
+#: spese/templates/spese/edit_receipt.html:83
+msgid "Check to delete this row"
+msgstr "Seleziona per eliminare questa riga"
+
+#: spese/templates/spese/edit_receipt.html:91
+#: spese/templates/spese/edit_receipt.html:159
+msgid "-- Choose --"
+msgstr "-- Scegli --"
+
+#: spese/templates/spese/edit_receipt.html:114
+msgid "No items. Add one manually."
+msgstr "Nessuna voce. Aggiungine una manualmente."
+
+#: spese/templates/spese/edit_receipt.html:136
+msgid "Save All Changes"
+msgstr "Salva tutte le modifiche"
+
+#: spese/templates/spese/edit_receipt.html:153
+msgid "Manual"
+msgstr "Manuale"
+
+#: spese/templates/spese/edit_receipt.html:155
+msgid "Item name"
+msgstr "Nome voce"
+
+#: spese/templates/spese/loading.html:8 spese/templates/spese/loading.html:40
+msgid "Reading receipt..."
+msgstr "Lettura della ricevuta..."
+
+#: spese/templates/spese/loading.html:46
+#: spese/templates/spese/loading_category.html:46
+msgid "Waiting for the worker..."
+msgstr "In attesa del worker..."
+
+#: spese/templates/spese/loading.html:62
+#: spese/templates/spese/loading_test.html:62
+#: spese/templates/spese/loading_test.html:203
+#: spese/templates/spese/loading_test.html:209
+msgid "Retry"
+msgstr "Riprova"
+
+#: spese/templates/spese/loading.html:65
+msgid "Cancel Receipt"
+msgstr "Annulla ricevuta"
+
+#: spese/templates/spese/loading_category.html:8
+#: spese/templates/spese/loading_category.html:40
+msgid "Categorization in progress..."
+msgstr "Categorizzazione in corso..."
+
+#: spese/templates/spese/loading_category.html:63
+msgid "Try Again"
+msgstr "Riprova"
+
+#: spese/templates/spese/loading_category.html:66
+#: spese/templates/spese/loading_category.html:195
+#: spese/templates/spese/loading_category.html:201
+msgid "Delete Receipt"
+msgstr "Elimina ricevuta"
+
+#: spese/templates/spese/loading_category.html:81
+msgid "Processing failed"
+msgstr "Elaborazione fallita"
+
+#: spese/templates/spese/loading_category.html:92
+#: spese/templates/spese/loading_test.html:100
+msgid "Already completed! Redirecting..."
+msgstr "Già completato! Reindirizzamento..."
+
+#: spese/templates/spese/loading_category.html:93
+#: spese/templates/spese/loading_category.html:118
+msgid "Categorization complete"
+msgstr "Categorizzazione completata"
+
+#: spese/templates/spese/loading_category.html:106
+#: spese/templates/spese/loading_test.html:130
+msgid "Status:"
+msgstr "Stato:"
+
+#: spese/templates/spese/loading_category.html:107
+msgid "Step"
+msgstr "Passaggio"
+
+#: spese/templates/spese/loading_category.html:113
+#: spese/templates/spese/loading_test.html:113
+#: spese/templates/spese/loading_test.html:145
+msgid "Unknown error"
+msgstr "Errore sconosciuto"
+
+#: spese/templates/spese/loading_category.html:117
+msgid "Done! Redirecting..."
+msgstr "Fatto! Reindirizzamento..."
+
+#: spese/templates/spese/loading_category.html:129
+msgid "WebSocket connection error"
+msgstr "Errore di connessione WebSocket"
+
+#: spese/templates/spese/loading_category.html:144
+#: spese/templates/spese/loading_test.html:186
+msgid "Restarting..."
+msgstr "Riavvio in corso..."
+
+#: spese/templates/spese/loading_category.html:160
+msgid "Error restarting the task. Please retry manually."
+msgstr "Errore nel riavvio dell'attività. Riprova manualmente."
+
+#: spese/templates/spese/loading_category.html:162
+#: spese/templates/spese/loading_category.html:168
+msgid "Retry Processing"
+msgstr "Riprova elaborazione"
+
+#: spese/templates/spese/loading_category.html:166
+#: spese/templates/spese/loading_test.html:207
+msgid "Connection error during restart."
+msgstr "Errore di connessione durante il riavvio."
+
+#: spese/templates/spese/loading_category.html:174
+msgid "Do you want to delete this receipt?"
+msgstr "Vuoi eliminare questa ricevuta?"
+
+#: spese/templates/spese/loading_category.html:179
+msgid "Deletion..."
+msgstr "Eliminazione in corso..."
+
+#: spese/templates/spese/loading_category.html:193
+msgid "Error while deleting"
+msgstr "Errore durante l'eliminazione"
+
+#: spese/templates/spese/loading_test.html:8
+msgid "Test in progress..."
+msgstr "Test in corso..."
+
+#: spese/templates/spese/loading_test.html:40
+msgid "Store Template test in progress"
+msgstr "Test del template del negozio in corso"
+
+#: spese/templates/spese/loading_test.html:46
+msgid "Waiting for the worker"
+msgstr "In attesa del worker"
+
+#: spese/templates/spese/loading_test.html:81
+msgid "Test failed"
+msgstr "Test fallito"
+
+#: spese/templates/spese/loading_test.html:103
+#: spese/templates/spese/loading_test.html:153
+msgid "Test completed successfully"
+msgstr "Test completato con successo"
+
+#: spese/templates/spese/loading_test.html:124
+#: spese/templates/spese/loading_test.html:150
+msgid "Done! Redirecting to the results..."
+msgstr "Fatto! Reindirizzamento ai risultati..."
+
+#: spese/templates/spese/loading_test.html:201
+msgid "Error restarting the task."
+msgstr "Errore nel riavvio dell'attività."
+
+#: spese/templates/spese/receipt_detail.html:4
+#: spese/templates/spese/receipt_detail.html:49
+msgid "Receipt Details"
+msgstr "Dettagli ricevuta"
+
+#: spese/templates/spese/receipt_detail.html:52
+msgid "Back to List"
+msgstr "Torna all'elenco"
+
+#: spese/templates/spese/receipt_detail.html:67
+#: spese/templates/spese/upload.html:24
+msgid "Receipt Image"
+msgstr "Immagine della ricevuta"
+
+#: spese/templates/spese/receipt_detail.html:68
+msgid "Click to zoom"
+msgstr "Clicca per ingrandire"
+
+#: spese/templates/spese/receipt_detail.html:79
+msgid "No image available"
+msgstr "Nessuna immagine disponibile"
+
+#: spese/templates/spese/receipt_detail.html:97
+msgid "Not assigned"
+msgstr "Non assegnato"
+
+#: spese/templates/spese/receipt_detail.html:106
+#: spese/templates/spese/receipt_list.html:36
+#: spese/templates/spese/review_category.html:30
+#: spese/templates/spese/test_results.html:39
+#: spese/templates/spese/test_results.html:195
+msgid "Date"
+msgstr "Data"
+
+#: spese/templates/spese/receipt_detail.html:107
+#: spese/templates/spese/receipt_list.html:51
+#: spese/templates/spese/report_spese.html:88
+#: spese/templates/spese/review_category.html:31
+msgid "Not specified"
+msgstr "Non specificato"
+
+#: spese/templates/spese/receipt_detail.html:110
+msgid "Receipt Total"
+msgstr "Totale ricevuta"
+
+#: spese/templates/spese/receipt_detail.html:121
+msgid "Mathematical Summary"
+msgstr "Riepilogo matematico"
+
+#: spese/templates/spese/receipt_detail.html:129
+msgid "Sum of Item Prices:"
+msgstr "Somma dei prezzi delle voci:"
+
+#: spese/templates/spese/receipt_detail.html:138
+msgid "Applied Discounts:"
+msgstr "Sconti applicati:"
+
+#: spese/templates/spese/receipt_detail.html:145
+msgid "Net Items Total:"
+msgstr "Totale netto delle voci:"
+
+#: spese/templates/spese/receipt_detail.html:158
+msgid "Comparison with Receipt"
+msgstr "Confronto con la ricevuta"
+
+#: spese/templates/spese/receipt_detail.html:163
+msgid "Match!"
+msgstr "Corrisponde!"
+
+#: spese/templates/spese/receipt_detail.html:165
+msgid "Mismatch"
+msgstr "Non corrisponde"
+
+#: spese/templates/spese/receipt_detail.html:171
+msgid "by"
+msgstr "di"
+
+#: spese/templates/spese/receipt_detail.html:175
+msgid "Difference: 0.00 €"
+msgstr "Differenza: 0,00 €"
+
+#: spese/templates/spese/receipt_detail.html:182
+msgid "Item prices match the total"
+msgstr "I prezzi delle voci corrispondono al totale"
+
+#: spese/templates/spese/receipt_detail.html:186
+msgid "Items total - discounts = receipt total"
+msgstr "Totale voci - sconti = totale ricevuta"
+
+#: spese/templates/spese/receipt_detail.html:190
+msgid "Possible extraction error"
+msgstr "Possibile errore di estrazione"
+
+#: spese/templates/spese/receipt_detail.html:195
+msgid "Receipt Total:"
+msgstr "Totale ricevuta:"
+
+#: spese/templates/spese/receipt_detail.html:212
+#: spese/templates/spese/review_category.html:50
+#: spese/templates/spese/test_results.html:107
+msgid "Item"
+msgstr "Voce"
+
+#: spese/templates/spese/receipt_detail.html:240
+msgid "To Categorize"
+msgstr "Da categorizzare"
+
+#: spese/templates/spese/receipt_detail.html:260
+#: spese/templates/spese/review_category.html:96
+msgid "No items found in this receipt."
+msgstr "Nessuna voce trovata in questa ricevuta."
+
+#: spese/templates/spese/receipt_detail.html:276
+msgid "Details"
+msgstr "Dettagli"
+
+#: spese/templates/spese/receipt_detail.html:282
+msgid "Full receipt"
+msgstr "Ricevuta completa"
+
+#: spese/templates/spese/receipt_list.html:13
+msgid "Hide failed"
+msgstr "Nascondi falliti"
+
+#: spese/templates/spese/receipt_list.html:18
+msgid "Show failed"
+msgstr "Mostra falliti"
+
+#: spese/templates/spese/receipt_list.html:25
+msgid "Upload New"
+msgstr "Carica nuovo"
+
+#: spese/templates/spese/receipt_list.html:60
+msgid "Draft"
+msgstr "Bozza"
+
+#: spese/templates/spese/receipt_list.html:65
+msgid "View Details"
+msgstr "Visualizza dettagli"
+
+#: spese/templates/spese/receipt_list.html:76
+msgid "Are you sure you want to delete this receipt and all associated data?"
+msgstr ""
+"Sei sicuro di voler eliminare questa ricevuta e tutti i dati associati?"
+
+#: spese/templates/spese/receipt_list.html:88
+msgid "No receipts found."
+msgstr "Nessuna ricevuta trovata."
+
+#: spese/templates/spese/receipt_list.html:88
+msgid "Upload the first one!"
+msgstr "Carica la prima!"
+
+#: spese/templates/spese/report_spese.html:4
+#: spese/templates/spese/report_spese.html:13
+msgid "Expense Report"
+msgstr "Resoconto spese"
+
+#: spese/templates/spese/report_spese.html:18
+msgid "From"
+msgstr "Da"
+
+#: spese/templates/spese/report_spese.html:22
+msgid "To"
+msgstr "A"
+
+#: spese/templates/spese/report_spese.html:26
+msgid "Filter"
+msgstr "Filtro"
+
+#: spese/templates/spese/report_spese.html:36
+msgid "Total Spent"
+msgstr "Spesa totale"
+
+#: spese/templates/spese/report_spese.html:38
+msgid "In the selected period"
+msgstr "Nel periodo selezionato"
+
+#: spese/templates/spese/report_spese.html:45
+msgid "Processed Receipts"
+msgstr "Ricevute elaborate"
+
+#: spese/templates/spese/report_spese.html:47
+msgid "Analyzed documents"
+msgstr "Documenti analizzati"
+
+#: spese/templates/spese/report_spese.html:54
+msgid "Average per Receipt"
+msgstr "Media per ricevuta"
+
+#: spese/templates/spese/report_spese.html:57
+msgid "Average value"
+msgstr "Valore medio"
+
+#: spese/templates/spese/report_spese.html:68
+msgid "Distribution by Category"
+msgstr "Distribuzione per categoria"
+
+#: spese/templates/spese/report_spese.html:81
+msgid "Top 5 Stores"
+msgstr "Top 5 negozi"
+
+#: spese/templates/spese/report_spese.html:92
+msgid "No data available"
+msgstr "Nessun dato disponibile"
+
+#: spese/templates/spese/report_spese.html:102
+msgid "Price Trends"
+msgstr "Andamento dei prezzi"
+
+#: spese/templates/spese/report_spese.html:103
+msgid ""
+"Coming soon: discover if your favorite product has increased in price over "
+"time."
+msgstr ""
+"Presto disponibile: scopri se il tuo prodotto preferito è diventato più "
+"costoso nel tempo."
+
+#: spese/templates/spese/review_category.html:7
+msgid "Receipt Categories"
+msgstr "Categorie ricevute"
+
+#: spese/templates/spese/review_category.html:16
+msgid "Category Review"
+msgstr "Revisione categorie"
+
+#: spese/templates/spese/review_category.html:21
+msgid "Receipt Summary"
+msgstr "Riepilogo ricevuta"
+
+#: spese/templates/spese/review_category.html:27
+msgid "Unknown Store"
+msgstr "Negozio sconosciuto"
+
+#: spese/templates/spese/review_category.html:44
+msgid "Category Assignment"
+msgstr "Assegnazione categoria"
+
+#: spese/templates/spese/review_category.html:65
+msgid "Unmapped"
+msgstr "Non mappato"
+
+#: spese/templates/spese/review_category.html:79
+msgid "-- Select a category --"
+msgstr "-- Seleziona una categoria --"
+
+#: spese/templates/spese/review_category.html:88
+msgid "Map the item first in the review screen"
+msgstr "Mappa prima la voce nella schermata di revisione"
+
+#: spese/templates/spese/review_category.html:107
+msgid "Save categories and continue"
+msgstr "Salva le categorie e continua"
+
+#: spese/templates/spese/store_template_form.html:3
+msgid "Store Template"
+msgstr "Template negozio"
+
+#: spese/templates/spese/store_template_form.html:12
+msgid "Edit:"
+msgstr "Modifica:"
+
+#: spese/templates/spese/store_template_form.html:12
+#: spese/templates/spese/store_template_list.html:14
+msgid "New Store"
+msgstr "Nuovo negozio"
+
+#: spese/templates/spese/store_template_form.html:20
+msgid "Correct the following errors:"
+msgstr "Correggi i seguenti errori:"
+
+#: spese/templates/spese/store_template_form.html:34
+msgid "General Information"
+msgstr "Informazioni generali"
+
+#: spese/templates/spese/store_template_form.html:42
+msgid "Display name (e.g., Conad)"
+msgstr "Nome visualizzato (ad esempio, Conad)"
+
+#: spese/templates/spese/store_template_form.html:48
+msgid "Word present in the OCR (e.g., DUEPI)"
+msgstr "Parola presente nell'OCR (ad esempio, DUEPI)"
+
+#: spese/templates/spese/store_template_form.html:55
+msgid "Duplicate items allowed"
+msgstr "Voci duplicate consentite"
+
+#: spese/templates/spese/store_template_form.html:55
+msgid "Allow the same item to appear multiple times"
+msgstr "Consenti che la stessa voce appaia più volte"
+
+#: spese/templates/spese/store_template_form.html:64
+msgid "LLM Prompts"
+msgstr "Prompt LLM"
+
+#: spese/templates/spese/store_template_form.html:68
+msgid "Article extraction instructions (Not currently in use)"
+msgstr "Istruzioni per l'estrazione degli articoli (attualmente non in uso)"
+
+#: spese/templates/spese/store_template_form.html:71
+msgid "Specific rules for extracting items from this supermarket."
+msgstr "Regole specifiche per estrarre le voci da questo supermercato."
+
+#: spese/templates/spese/store_template_form.html:79
+msgid "OCR Parsing (Regex and Normalization)"
+msgstr "Parsing OCR (Regex e normalizzazione)"
+
+#: spese/templates/spese/store_template_form.html:84
+msgid "Quantity Regex"
+msgstr "Regex quantità"
+
+#: spese/templates/spese/store_template_form.html:88
+msgid "Pattern to capture lines like 2 PCS x €6.99"
+msgstr "Pattern per catturare righe come 2 PCS x €6,99"
+
+#: spese/templates/spese/store_template_form.html:91
+msgid "Discount Regex"
+msgstr "Regex sconto"
+
+#: spese/templates/spese/store_template_form.html:95
+msgid "Pattern for identifying discount lines."
+msgstr "Pattern per identificare le righe di sconto."
+
+#: spese/templates/spese/store_template_form.html:100
+msgid "Remove VAT Pattern"
+msgstr "Pattern per rimuovere l'IVA"
+
+#: spese/templates/spese/store_template_form.html:104
+msgid "Regex to remove strings like VI* or VAT percentages from lines."
+msgstr "Regex per rimuovere stringhe come VI* o percentuali IVA dalle righe."
+
+#: spese/templates/spese/store_template_form.html:108
+msgid "Lines to Ignore (JSON)"
+msgstr "Righe da ignorare (JSON)"
+
+#: spese/templates/spese/store_template_form.html:118
+msgid "Store Keywords (JSON)"
+msgstr "Parole chiave del negozio (JSON)"
+
+#: spese/templates/spese/store_template_form.html:121
+msgid ""
+"JSON list of keywords to identify the store name in the first lines of the "
+"OCR."
+msgstr ""
+"Elenco JSON di parole chiave per identificare il nome del negozio nelle "
+"prime righe dell'OCR."
+
+#: spese/templates/spese/store_template_form.html:144
+#: spese/templates/spese/store_template_form.html:148
+msgid "Save and Test"
+msgstr "Salva e testa"
+
+#: spese/templates/spese/store_template_form.html:168
+msgid "Test Configuration:"
+msgstr "Configurazione di test:"
+
+#: spese/templates/spese/store_template_form.html:175
+msgid "Choose a receipt image from the library or upload a new one."
+msgstr "Scegli un'immagine di ricevuta dalla libreria o caricane una nuova."
+
+#: spese/templates/spese/store_template_form.html:176
+msgid "It will be used to test the current configuration."
+msgstr "Verrà usata per testare la configurazione corrente."
+
+#: spese/templates/spese/store_template_form.html:181
+msgid "Use the receipt from the bookstore."
+msgstr "Usa la ricevuta dalla libreria."
+
+#: spese/templates/spese/store_template_form.html:185
+msgid "-- Select an existing file --"
+msgstr "-- Seleziona un file esistente --"
+
+#: spese/templates/spese/store_template_form.html:189
+msgid "No files available in /media/test/"
+msgstr "Nessun file disponibile in /media/test/"
+
+#: spese/templates/spese/store_template_form.html:192
+msgid "The files are uploaded to the folder."
+msgstr "I file vengono caricati nella cartella."
+
+#: spese/templates/spese/store_template_form.html:196
+msgid "- or -"
+msgstr "- o -"
+
+#: spese/templates/spese/store_template_form.html:201
+msgid "Upload new receipt"
+msgstr "Carica una nuova ricevuta"
+
+#: spese/templates/spese/store_template_form.html:208
+msgid "It will be saved in"
+msgstr "Verrà salvata in"
+
+#: spese/templates/spese/store_template_form.html:208
+msgid "and reused in future tests"
+msgstr "e riutilizzata nei test futuri"
+
+#: spese/templates/spese/store_template_form.html:217
+msgid "Start test"
+msgstr "Avvia test"
+
+#: spese/templates/spese/store_template_list.html:4
+#: spese/templates/spese/store_template_list.html:10
+msgid "Store Templates"
+msgstr "Template dei negozi"
+
+#: spese/templates/spese/store_template_list.html:28
+msgid "Mapping"
+msgstr "Mappatura"
+
+#: spese/templates/spese/store_template_list.html:29
+msgid "Repeated Items"
+msgstr "Articoli ripetuti"
+
+#: spese/templates/spese/store_template_list.html:91
+msgid "No store template."
+msgstr "Nessun template del negozio."
+
+#: spese/templates/spese/store_template_list.html:93
+msgid "Create one now"
+msgstr "Creane uno adesso"
+
+#: spese/templates/spese/test_results.html:4
+#: spese/templates/spese/test_results.html:21
+msgid "Test Results"
+msgstr "Risultati test"
+
+#: spese/templates/spese/test_results.html:25
+msgid "Back to Edit"
+msgstr "Torna alla modifica"
+
+#: spese/templates/spese/test_results.html:33
+msgid "Current Test"
+msgstr "Test corrente"
+
+#: spese/templates/spese/test_results.html:40
+msgid "Test Date"
+msgstr "Data del test"
+
+#: spese/templates/spese/test_results.html:52
+msgid "None"
+msgstr "Nessuno"
+
+#: spese/templates/spese/test_results.html:60
+#: spese/templates/spese/test_results.html:196
+msgid "OCR Total"
+msgstr "Totale OCR"
+
+#: spese/templates/spese/test_results.html:66
+msgid "Calculated Total"
+msgstr "Totale calcolato"
+
+#: spese/templates/spese/test_results.html:72
+#: spese/templates/spese/test_results.html:198
+msgid "Difference"
+msgstr "Differenza"
+
+#: spese/templates/spese/test_results.html:84
+#: spese/templates/spese/test_results.html:200
+msgid "Items"
+msgstr "Voci"
+
+#: spese/templates/spese/test_results.html:87
+msgid "discounted"
+msgstr "scontate"
+
+#: spese/templates/spese/test_results.html:88
+msgid "multiple"
+msgstr "multiple"
+
+#: spese/templates/spese/test_results.html:99
+msgid "Extracted Items"
+msgstr "Voci estratte"
+
+#: spese/templates/spese/test_results.html:136
+msgid "No items extracted"
+msgstr "Nessuna voce estratta"
+
+#: spese/templates/spese/test_results.html:149
+msgid "Performance (Execution Times)"
+msgstr "Prestazioni (tempi di esecuzione)"
+
+#: spese/templates/spese/test_results.html:161
+msgid "Normalization"
+msgstr "Normalizzazione"
+
+#: spese/templates/spese/test_results.html:188
+msgid "Comparison with Previous Tests (last 5)"
+msgstr "Confronto con i test precedenti (ultimi 5)"
+
+#: spese/templates/spese/test_results.html:197
+msgid "Calc. Total"
+msgstr "Totale calc."
+
+#: spese/templates/spese/test_results.html:199
+msgid "Match"
+msgstr "Corrispondenza"
+
+#: spese/templates/spese/test_results.html:201
+msgid "Discounted"
+msgstr "Scontato"
+
+#: spese/templates/spese/test_results.html:202
+msgid "Multiple"
+msgstr "Multiplo"
+
+#: spese/templates/spese/test_results.html:203
+msgid "Total Time"
+msgstr "Tempo totale"
+
+#: spese/templates/spese/test_results.html:241
+msgid "Debug Log"
+msgstr "Log di debug"
+
+#: spese/templates/spese/test_results.html:241
+msgid "events"
+msgstr "eventi"
+
+#: spese/templates/spese/test_results.html:263
+msgid "Confirm Configuration"
+msgstr "Conferma configurazione"
+
+#: spese/templates/spese/test_results.html:267
+msgid ""
+"If the configuration works correctly, confirm to save the data and delete "
+"previous tests."
+msgstr ""
+"Se la configurazione funziona correttamente, conferma per salvare i dati ed "
+"eliminare i test precedenti."
+
+#: spese/templates/spese/test_results.html:273
+msgid "Back to Edit and Retry"
+msgstr "Torna alla modifica e riprova"
+
+#: spese/templates/spese/test_results.html:286
+msgid "End Test - Correct Result"
+msgstr "Termina test - risultato corretto"
+
+#: spese/templates/spese/test_results.html:294
+msgid "All previous tests for this store will be deleted."
+msgstr "Tutti i test precedenti per questo negozio verranno eliminati."
+
+#: spese/templates/spese/upload.html:3
+msgid "Upload Receipt"
+msgstr "Carica ricevuta"
+
+#: spese/templates/spese/upload.html:10
+msgid "Upload New Receipt"
+msgstr "Carica nuova ricevuta"
+
+#: spese/templates/spese/upload.html:42
+msgid "Start analysis"
+msgstr "Avvia analisi"
+
+#: spese/views.py:1169
+msgid "Error in general receipt data: {}"
+msgstr "Errore nei dati generali della ricevuta: {}"
+
+#: spese/views.py:1306
+#, python-brace-format
+msgid "Error in item \"{item_text}\": {error}"
+msgstr "Errore nella voce \"{item_text}\": {error}"
+
+#: spese/views.py:1430
+#, python-brace-format
+msgid "Receipt updated successfully! ({count} items modified/added)"
+msgstr "Ricevuta aggiornata con successo! ({count} voci modificate/aggiunte)"
+
+#: spese/views.py:1477
+msgid "Receipt deleted successfully."
+msgstr "Ricevuta eliminata con successo."
+
+#: spese/views.py:1716 spese/views.py:1765
+#, python-brace-format
+msgid "Store \"{store_name}\" saved successfully!"
+msgstr "Negozio \"{store_name}\" salvato correttamente!"
+
+#: spese/views.py:1847
+#, python-brace-format
+msgid "Store \"{store_name}\" deleted successfully!"
+msgstr "Negozio \"{store_name}\" eliminato correttamente!"
+
+#: spese/views.py:2005
+msgid "Selected file not found."
+msgstr "File selezionato non trovato."
+
+#: spese/views.py:2021
+msgid "You must select or upload an image."
+msgstr "Devi selezionare o caricare un'immagine."
+
+#: spese/views.py:2072
+#, python-brace-format
+msgid "Test started for \"{store_name}\""
+msgstr "Test avviato per \"{store_name}\""
+
+#: spese/views.py:2220
+msgid "Error: no test receipt associated with this task."
+msgstr "Errore: nessuna ricevuta di test associata a questa attività."
+
+#: spese/views.py:2247
+#, python-format
+msgid ""
+"✅ Test confirmed! Configuration for \"%(store_name)s\" saved. "
+"%(num_deleted)s previous tests deleted."
+msgstr ""
+"✅ Test confermato! Configurazione per \"%(store_name)s\" salvata. "
+"%(num_deleted)s test precedenti eliminati."
+
+#: spese/views.py:2258
+#, python-format
+msgid "✅ Test confirmed! Configuration for \"%(store_name)s\" saved."
+msgstr "✅ Test confermato! Configurazione per \"%(store_name)s\" salvata."
+
+#: spese/views.py:2286
+#, python-format
+msgid "Welcome back, %(username)s!"
+msgstr "Bentornato, %(username)s!"
+
+#: spese/views.py:2291
+msgid "Username or password not valid."
+msgstr "Nome utente o password non validi."
+
+#: spese/views.py:2301
+msgid "Successfully disconnected."
+msgstr "Disconnessione effettuata con successo."
+
+#: spese/views.py:2398
+msgid "Username and password are required."
+msgstr "Nome utente e password sono obbligatori."
+
+#: spese/views.py:2400
+msgid "The passwords do not match."
+msgstr "Le password non corrispondono."
+
+#: spese/views.py:2402
+msgid "The password must be at least 8 characters long."
+msgstr "La password deve essere lunga almeno 8 caratteri."
+
+#: spese/views.py:2404
+msgid "This username is already in use."
+msgstr "Questo nome utente è già in uso."
+
+#: spese/views.py:2419
+#, python-brace-format
+msgid "Superuser \"{username}\" successfully created! You can now log in."
+msgstr ""
+"Superutente \"{username}\" creato con successo! Ora puoi effettuare il login."
+
+#: spese/views.py:2549
+msgid "AI configuration successfully saved!"
+msgstr "Configurazione IA salvata con successo!"

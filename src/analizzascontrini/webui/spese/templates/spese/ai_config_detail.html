@@ -1,0 +1,202 @@
+{% extends "spese/base.html" %}
+{% load i18n %}
+{% block title %}{% trans "AI Settings"%}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-cpu"></i> {% trans "AI Settings"%}</h2>
+        <div>
+            <a href="{% url 'ai_config_update' %}" class="btn btn-warning">
+                <i class="bi bi-pencil"></i> {% trans "Edit" %}
+            </a>
+            <a href="{% url 'report_spese' %}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> {% trans "Back" %}
+            </a>
+        </div>
+    </div>
+
+    <!-- STATO CONNESSIONE E MODELLI -->
+    <div class="card shadow mb-4">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <span><i class="bi bi-activity"></i> {% trans "Connection Status and Models"%}</span>
+            <span id="global-status" class="badge bg-light text-dark">
+                {% if task.status == 'COMPLETED' %}{% trans "Verified"%}
+                {% elif task.status == 'FAILED' %}{% trans "Failed"%}
+                {% else %}{% trans "Check in progress..."%}{% endif %}
+            </span>
+        </div>
+        <div class="card-body">
+            <div class="row g-3">
+                <!-- RIGA 1: 2 elementi -->
+                <div class="col-md-6">
+                    <div class="p-2 bg-light rounded border h-100">
+                        <small class="text-muted text-uppercase fw-bold d-block mb-1">Ollama Host</small>
+                        <div class="fs-6 font-monospace text-break" id="status-host">
+                            {{ current_input.host }} 
+                            <span class="status-icon">
+                                {% if task.status == 'COMPLETED' and task_output.host_raggiungibile %}✅
+                                {% elif task.status == 'FAILED' %}❌
+                                {% else %}⏳{% endif %}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="col-md-6">
+                    <div class="p-2 bg-light rounded border h-100">
+                        <small class="text-muted text-uppercase fw-bold d-block mb-1">{% trans "OCR Model"%}</small>
+                        <div class="fs-6 text-break" id="status-ocr">
+                            {{ current_input.modello_ocr }}
+                            <span class="status-icon">
+                                {% if task.status == 'COMPLETED' and task_output.modello_ocr_presente %}✅
+                                {% elif task.status == 'FAILED' %}❌
+                                {% else %}⏳{% endif %}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- RIGA 2: 3 elementi -->
+                <div class="col-md-4">
+                    <div class="p-2 bg-light rounded border h-100">
+                        <small class="text-muted text-uppercase fw-bold d-block mb-1">{% trans "Analysis Model"%}</small>
+                        <div class="fs-6 text-break" id="status-analisi">
+                            {{ current_input.modello_analisi }}
+                            <span class="status-icon">
+                                {% if task.status == 'COMPLETED' and task_output.modello_analisi_presente %}✅
+                                {% elif task.status == 'FAILED' %}❌
+                                {% else %}⏳{% endif %}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="p-2 bg-light rounded border h-100">
+                        <small class="text-muted text-uppercase fw-bold d-block mb-1">{% trans "Categorization Model"%}</small>
+                        <div class="fs-6 text-break" id="status-cat">
+                            {{ current_input.modello_categorizzazione }}
+                            <span class="status-icon">
+                                {% if task.status == 'COMPLETED' and task_output.modello_categorizzazione_presente %}✅
+                                {% elif task.status == 'FAILED' %}❌
+                                {% else %}⏳{% endif %}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="p-2 bg-light rounded border h-100">
+                        <small class="text-muted text-uppercase fw-bold d-block mb-1">{% trans "Chat Model"%}</small>
+                        <div class="fs-6 text-break" id="status-chat">
+                            {{ current_input.modello_chat }}
+                            <span class="status-icon">
+                                {% if task.status == 'COMPLETED' and task_output.modello_chat_presente %}✅
+                                {% elif task.status == 'FAILED' %}❌
+                                {% else %}⏳{% endif %}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {% if task.status == 'FAILED' and task.error %}
+            <div class="alert alert-danger mt-3 mb-0">
+                <i class="bi bi-exclamation-triangle"></i> <strong>{% trans "Error"%}</strong> {{ task.error }}
+            </div>
+            {% endif %}
+        </div>
+    </div>
+
+       <!-- PROMPT (ANTEPRIMA) -->
+    <div class="card shadow mb-4">
+        <div class="card-header bg-info text-white">
+            <i class="bi bi-file-text"></i> {% trans "Prompts" %}
+        </div>
+        <div class="card-body">
+            <div class="mb-3">
+                <h6 class="fw-bold">{% trans "OCR Prompt" %}</h6>
+                <!-- CAMBIATO: config.prompt_ocr -> config.ocr_prompt -->
+                <pre class="bg-light p-3 rounded border small" style="max-height: 200px; overflow-y: auto;">{{ config.ocr_prompt|default:_("(System default)") }}</pre>
+            </div>
+            <div class="mb-3">
+                <h6 class="fw-bold">{% trans "Analysis Prompt" %}</h6>
+                <!-- CAMBIATO: config.prompt_analisi -> config.analysis_prompt -->
+                <pre class="bg-light p-3 rounded border small" style="max-height: 200px; overflow-y: auto;">{{ config.analysis_prompt|default:_("(System default)") }}</pre>
+            </div>
+            <div class="mb-3">
+                <h6 class="fw-bold">{% trans "Categorization Prompt" %}</h6>
+                <!-- CAMBIATO: config.prompt_categorizzazione -> config.categorization_prompt -->
+                <pre class="bg-light p-3 rounded border small" style="max-height: 200px; overflow-y: auto;">{{ config.categorization_prompt|default:_("(System default)") }}</pre>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% block extra_js %}
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        let taskId = "{{ task.id }}";
+        let statoIniziale = "{{ task.status }}".trim().toUpperCase();
+
+        // ✅ SE IL TASK È GIÀ COMPLETATO O FALLITO, NON FARE NULLA
+        // Questo è il "paracadute" che impedisce il loop infinito!
+        if (statoIniziale === "COMPLETED" || statoIniziale === "FAILED") {
+            console.log(`[WS Manager] Task ${taskId} è già ${statoIniziale}. Nessuna azione necessaria.`);
+            return; 
+        }
+
+        if (typeof TaskWebSocketManager !== 'undefined') {
+            const wsManager = new TaskWebSocketManager(taskId, statoIniziale, {
+                onProcessing: (data) => {
+                    const statusEl = document.getElementById("global-status");
+                    if (statusEl) {
+                        statusEl.innerText = "{% trans 'Check in progress...' %}";
+                        statusEl.className = "badge bg-warning text-dark";
+                    }
+                },
+                onFailed: (data) => {
+                    const statusEl = document.getElementById("global-status");
+                    if (statusEl) {
+                        statusEl.innerText = "{% trans 'Failed' %}";
+                        statusEl.className = "badge bg-danger";
+                    }
+                    // In caso di fallimento, un reload è utile per mostrare l'errore completo dal backend
+                    setTimeout(() => window.location.reload(), 1000);
+                },
+                onCompleted: (data) => {
+                    const statusEl = document.getElementById("global-status");
+                    if (statusEl) {
+                        statusEl.innerText = "{% trans 'Completed! Refreshing...' %}";
+                        statusEl.className = "badge bg-success";
+                    }
+                    
+                    // ✅ RICARICA LA PAGINA UNA SOLA VOLTA 
+                    // Così Django può renderizzare le ✅ verdi usando i nuovi task_output
+                    setTimeout(() => {
+                        window.location.reload();
+                    }, 800);
+                },
+                onError: (err) => {
+                    console.error("WS Error:", err);
+                    const statusEl = document.getElementById("global-status");
+                    if (statusEl) {
+                        statusEl.innerText = "{% trans 'Connection error' %}";
+                        statusEl.className = "badge bg-danger";
+                    }
+                }
+            });
+
+            wsManager.start();
+        } else {
+            console.error("{% trans 'ERROR: task-ws-manager.js was not loaded correctly.' %}");
+        }
+    });
+</script>
+{% endblock %}
+
+
+
+{% endblock %}

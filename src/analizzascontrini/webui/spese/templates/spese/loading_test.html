@@ -1,0 +1,216 @@
+{% load static %}
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% trans "Test in progress..." %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+    <style>
+        body { 
+            background-color: #f8f9fa; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            min-height: 100vh; 
+        }
+        .loading-card {
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+        }
+        .spinner { 
+            border: 6px solid #f3f3f3; 
+            border-top: 6px solid #0d6efd; 
+            border-radius: 50%; 
+            width: 60px; 
+            height: 60px; 
+            animation: spin 1.5s linear infinite; 
+            margin: 0 auto 20px; 
+        }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    </style>
+</head>
+<body>
+
+    <div class="card shadow loading-card p-4">
+        <h4 class="mb-3">
+            <i class="bi bi-flask text-primary"></i> {% trans "Store Template test in progress" %}
+        </h4>
+        
+        <div class="spinner" id="main-spinner"></div>
+        
+        <!-- Stato generale -->
+        <div id="status" class="text-muted mb-2">{% trans "Waiting for the worker" %}</div>
+        
+        <!-- Step dettagliato -->
+        <div id="step" class="fw-bold text-primary mb-3" style="min-height: 24px;">
+            {{ task.step|default:"Inizializzazione..." }}
+        </div>
+        
+        <!-- Barra di progresso -->
+        <div class="progress mb-2" style="height: 12px;">
+            <div id="progress-bar" class="progress-bar progress-bar-striped progress-bar-animated bg-primary" 
+                 role="progressbar" style="width: {{ task.progress }}%"></div>
+        </div>
+        <div id="progress-text" class="fw-bold mb-3">{{ task.progress }}%</div>
+
+        <!-- Pulsante Riprova (nascosto di default) -->
+        <button id="retry-btn" class="btn btn-warning w-100" style="display: none;">
+            <i class="bi bi-arrow-clockwise"></i> {% trans "Retry" %}
+        </button>
+    </div>
+
+    <!-- 1. Carica il manager generico (assicurati che il percorso sia corretto) -->
+<script src="{% static 'js/task-ws-manager.js' %}"></script>
+
+<script>
+    // ✅ 1. CORRETTO: Usa 'status' (inglese) invece di 'stato'
+    const taskId = "{{ task.id }}";
+    const statoIniziale = "{{ task.status }}".trim().toUpperCase();
+    console.log("🔍 Stato iniziale rilevato dal template:", statoIniziale);
+
+    // Funzione helper per aggiornare la UI in caso di fallimento
+    function handleFailedState(erroreMsg) {
+        const statusEl = document.getElementById("status");
+        if (statusEl) statusEl.innerHTML = `<span class="text-danger fw-bold">Errore: ${erroreMsg}</span>`;
+        
+        const stepEl = document.getElementById("step");
+        if (stepEl) stepEl.innerText = "{% trans 'Test failed' %}";
+        
+        const progressBar = document.getElementById("progress-bar");
+        if (progressBar) {
+            progressBar.classList.remove("bg-primary", "progress-bar-animated");
+            progressBar.classList.add("bg-danger");
+        }
+        
+        const spinner = document.getElementById("main-spinner");
+        if (spinner) spinner.style.display = "none";
+        
+        const retryBtn = document.getElementById("retry-btn");
+        if (retryBtn) retryBtn.style.display = "block";
+    }
+
+    // 2. Gestione stato iniziale (se il task è già finito al caricamento)
+    if (statoIniziale === "COMPLETED") {
+        console.log("✅ Stato iniziale COMPLETED rilevato. Redirect in corso...");
+        const statusEl = document.getElementById("status");
+        if (statusEl) statusEl.innerText = "{% trans 'Already completed! Redirecting...' %}";
+        
+        const stepEl = document.getElementById("step");
+        if (stepEl) stepEl.innerText = "{% trans 'Test completed successfully' %}";
+        
+        const spinner = document.getElementById("main-spinner");
+        if (spinner) spinner.style.display = "none";
+        
+        setTimeout(() => { window.location.href = `/scontrini/test/risultati/${taskId}/`; }, 500);
+    } 
+    else if (statoIniziale === "FAILED") {
+        console.log("❌ Stato iniziale FAILED rilevato.");
+        // ✅ CORRETTO: Usa 'error' invece di 'errore'
+        handleFailedState("{{ task.error|escapejs }}" || "{% trans 'Unknown error' %}");
+    } 
+    else {
+        console.log("⏳ Avvio WebSocket per stato:", statoIniziale);
+        // 3. Se è in PENDING o PROCESSING, usiamo il Manager
+        const wsManager = new TaskWebSocketManager(taskId, statoIniziale, {
+            onProcessing: (data) => {
+                // 🔥 FALLBACK INFALLIBILE: Se onCompleted non scatta, lo gestiamo qui
+                if (data.status === "COMPLETED") {
+                    console.log("✅ COMPLETAMENTO RILEVATO DENTRO onProcessing!");
+                    const statusEl = document.getElementById("status");
+                    if (statusEl) statusEl.innerText = "{% trans 'Done! Redirecting to the results...' %}";
+                    setTimeout(() => { window.location.href = `/scontrini/test/risultati/${taskId}/`; }, 500);
+                    return;
+                }
+
+                const statusEl = document.getElementById("status");
+                if (statusEl) statusEl.innerText = "{% trans 'Status:' %} " + data.status;
+                
+                const stepEl = document.getElementById("step");
+                if (stepEl && data.step) stepEl.innerText = data.step;
+                
+                const progressBar = document.getElementById("progress-bar");
+                if (progressBar && data.progress !== undefined) {
+                    progressBar.style.width = data.progress + "%";
+                    const progressText = document.getElementById("progress-text");
+                    if (progressText) progressText.innerText = data.progress + "%";
+                }
+            },
+            onFailed: (data) => {
+                console.error("❌ WS Failed:", data);
+                // ✅ CORRETTO: Usa 'error' invece di 'errore'
+                handleFailedState(data.error || "{% trans 'Unknown error' %}");
+            },
+            onCompleted: (data) => {
+                console.log("✅ onCompleted callback attivato dal Manager!");
+                const statusEl = document.getElementById("status");
+                if (statusEl) statusEl.innerText = "{% trans 'Done! Redirecting to the results...' %}";
+                
+                const stepEl = document.getElementById("step");
+                if (stepEl) stepEl.innerText = "{% trans 'Test completed successfully' %}";
+                
+                const progressBar = document.getElementById("progress-bar");
+                if (progressBar) {
+                    progressBar.classList.remove("bg-primary", "progress-bar-animated");
+                    progressBar.classList.add("bg-success");
+                }
+                
+                const spinner = document.getElementById("main-spinner");
+                if (spinner) spinner.style.display = "none";
+                
+                setTimeout(() => {
+                    window.location.href = `/scontrini/test/risultati/${taskId}/`;
+                }, 1500);
+            },
+            onError: (err) => {
+                console.error("Errore WebSocket:", err);
+                const statusEl = document.getElementById("status");
+                if (statusEl) statusEl.innerHTML = `<span class="text-danger">Errore di connessione WebSocket</span>`;
+            }
+        });
+
+        wsManager.start();
+    }
+
+    // =========================================================
+    // LOGICA SPECIFICA DEI PULSANTI 
+    // =========================================================
+    const retryBtn = document.getElementById("retry-btn");
+    if (retryBtn) {
+        retryBtn.addEventListener("click", async function() {
+            const btn = this;
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> {% trans "Restarting..." %}';
+            
+            try {
+                const response = await fetch(`/scontrini/task/${taskId}/retry/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': '{{ csrf_token }}', 
+                        'Content-Type': 'application/json',
+                        'X-Requested-With': 'XMLHttpRequest'
+                    }
+                });
+                
+                if (response.ok) {
+                    setTimeout(() => { window.location.reload(); }, 500);
+                } else {
+                    alert("{% trans 'Error restarting the task.' %}");
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="bi bi-arrow-clockwise"></i> {% trans "Retry" %}';
+                }
+            } catch (error) {
+                console.error("Errore fetch:", error);
+                alert("{% trans 'Connection error during restart.' %}");
+                btn.disabled = false;
+                btn.innerHTML = '<i class="bi bi-arrow-clockwise"></i> {% trans "Retry" %}';
+            }
+        });
+    }
+</script>
+
+</body>
+</html>

@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <title>Conferma Eliminazione</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
+</head>
+<body class="bg-light">
+
+<div class="container py-5">
+    <div class="card shadow border-danger" style="max-width: 600px; margin: 0 auto;">
+        <div class="card-header bg-danger text-white">
+            <i class="bi bi-exclamation-triangle"></i> Conferma Eliminazione
+        </div>
+        <div class="card-body text-center">
+            <i class="bi bi-shop fs-1 text-danger mb-3 d-block"></i>
+            <h4>Sei sicuro di voler eliminare <strong>{{ object.nome }}</strong>?</h4>
+            <p class="text-muted">
+                Questa azione è <strong>irreversibile</strong>. Verranno eliminati anche tutti i mapping associati.
+            </p>
+            {% if object.scontrino_set.exists %}
+                <div class="alert alert-warning">
+                    <i class="bi bi-exclamation-triangle-fill"></i>
+                    Attenzione: ci sono <strong>{{ object.scontrino_set.count }} scontrini</strong> associati!
+                </div>
+            {% endif %}
+        </div>
+        <div class="card-footer bg-light d-flex justify-content-between">
+            <a href="{% url 'supermercato_detail' object.pk %}" class="btn btn-secondary">
+                <i class="bi bi-x-circle"></i> Annulla
+            </a>
+            <form method="post" class="d-inline">
+                {% csrf_token %}
+                <button type="submit" class="btn btn-danger">
+                    <i class="bi bi-trash"></i> Conferma Eliminazione
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

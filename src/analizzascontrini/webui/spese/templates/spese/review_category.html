@@ -1,0 +1,116 @@
+{% load i18n %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% trans "Receipt Categories" %}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+</head>
+
+<body class="bg-light">
+
+<div class="container py-4">
+
+    <h2 class="mb-4"><i class="bi bi-tags"></i> {% trans "Category Review" %}</h2>
+
+    <!-- RIEPILOGO SCONTRINO -->
+    <div class="card shadow mb-4">
+        <div class="card-header bg-primary text-white">
+            {% trans "Receipt Summary" %}
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-4 mb-3 mb-md-0">
+                    <label class="form-label text-muted small fw-bold text-uppercase">{% trans "Store" %}</label>
+                    <p class="fs-5 mb-0">{{ receipt.ocr_store_name|default:_("Unknown Store") }}</p>
+                </div>
+                <div class="col-md-4 mb-3 mb-md-0">
+                    <label class="form-label text-muted small fw-bold text-uppercase">{% trans "Date" %}</label>
+                    <p class="fs-5 mb-0">{{ receipt.receipt_date|date:"d/m/Y"|default:_("Not specified") }}</p>
+                </div>
+                <div class="col-md-4">
+                    <label class="form-label text-muted small fw-bold text-uppercase">{% trans "Total" %}</label>
+                    <p class="fs-4 mb-0 text-primary fw-bold">{{ receipt.total }} €</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <h3 class="mb-3">{% trans "Category Assignment" %}</h3>
+        
+        <div class="table-responsive bg-white shadow-sm rounded p-3">
+            <table class="table table-hover table-bordered align-middle">
+                <thead class="table-light">
+                    <tr>
+                        <th style="width: 40%;">{% trans "Item" %}</th>
+                        <th style="width: 15%;">{% trans "Price" %}</th>
+                        <th style="width: 45%;">{% trans "Category" %}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- CAMBIATO: voce -> item, scontrino.voci -> receipt.items.all -->
+                    {% for item in receipt.items.all %}
+                    <tr>
+                        <td>
+                            {% if item.product %}
+                                <span class="fw-semibold text-dark">{{ item.product.name }}</span>
+                                <br>
+                                <small class="text-muted font-monospace">{{ item.original_text }}</small>
+                            {% else %}
+                                <span class="text-danger fw-semibold">{% trans "Unmapped" %}</span>
+                                <br>
+                                <small class="text-muted font-monospace">{{ item.original_text }}</small>
+                            {% endif %}
+                        </td>
+                        
+                        <td class="fw-bold text-end">
+                            {{ item.price }} €
+                        </td>
+                        
+                        <td>
+                            {% if item.product %}
+                                <!-- CAMBIATO: nome dell'input in inglese -->
+                                <select name="category_{{ item.id }}" class="form-select form-select-sm">
+                                    <option value="">{% trans "-- Select a category --" %}</option>
+                                    {% for category in categories %}
+                                        <option value="{{ category.id }}" {% if item.product.category_id == category.id %}selected{% endif %}>
+                                            {{ category.name }}
+                                        </option>
+                                    {% endfor %}
+                                </select>
+                            {% else %}
+                                <span class="text-muted small fst-italic">
+                                    <i class="bi bi-exclamation-triangle"></i> {% trans "Map the item first in the review screen" %}
+                                </span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="3" class="text-center py-4 text-muted">
+                            {% trans "No items found in this receipt." %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- PULSANTE SALVATAGGIO -->
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-4">
+            <button type="submit" class="btn btn-success btn-lg px-5">
+                <i class="bi bi-save"></i> {% trans "Save categories and continue" %}
+            </button>
+        </div>
+
+    </form>
+
+</div>
+
+</body>
+</html>

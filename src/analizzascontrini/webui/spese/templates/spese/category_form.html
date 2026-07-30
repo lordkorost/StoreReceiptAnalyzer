@@ -1,0 +1,66 @@
+{% extends "spese/base.html" %}
+{% load i18n %}
+
+{% block title %}
+{% if object %}
+    {% trans "Edit category" %}
+{% else %}
+    {% trans "New category" %}
+{% endif %}
+{% endblock %}
+
+{% block content %}
+
+<div class="row justify-content-center">
+
+    <div class="col-lg-7">
+
+        <div class="card shadow-sm">
+
+            <div class="card-header">
+
+                <h4 class="mb-0">
+                    {% if object %}
+                        <i class="bi bi-pencil"></i>
+                        {% trans "Edit category" %}
+                    {% else %}
+                        <i class="bi bi-plus-circle"></i>
+                        {% trans "New category" %}
+                    {% endif %}
+                </h4>
+
+            </div>
+
+            <div class="card-body">
+
+                <form method="post">
+
+                    {% csrf_token %}
+
+                    {{ form.as_p }}
+
+                    <div class="d-flex justify-content-end gap-2">
+
+                        <a href="{% url 'category_list' %}"
+                           class="btn btn-outline-secondary">
+                            {% trans "Cancel" %}
+                        </a>
+
+                        <button class="btn btn-primary" type="submit">
+                            <i class="bi bi-check-lg"></i>
+                            {% trans "Save" %}
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+{% endblock %}

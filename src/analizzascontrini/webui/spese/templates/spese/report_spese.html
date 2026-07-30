@@ -1,0 +1,151 @@
+{% extends 'spese/base.html' %}
+{% load i18n %}
+
+{% block title %}{% trans "Expense Report" %} - AnalizzaScontrini{% endblock %}
+
+{% block extra_css %}
+<!-- Chart.js per i grafici -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="mb-0"><i class="bi bi-bar-chart-line"></i> {% trans "Expense Report" %}</h2>
+    
+    <!-- Filtro Periodo -->
+    <form method="get" class="d-flex gap-2 align-items-end">
+        <div>
+            <label class="form-label small mb-1">{% trans "From" %}</label>
+            <input type="date" name="start_date" class="form-control form-control-sm" value="{{ start_date|date:'Y-m-d' }}">
+        </div>
+        <div>
+            <label class="form-label small mb-1">{% trans "To" %}</label>
+            <input type="date" name="end_date" class="form-control form-control-sm" value="{{ end_date|date:'Y-m-d' }}">
+        </div>
+        <button type="submit" class="btn btn-primary btn-sm">
+            <i class="bi bi-funnel"></i> {% trans "Filter" %}
+        </button>
+    </form>
+</div>
+
+<!-- KPI CARDS -->
+<div class="row g-4 mb-4">
+    <div class="col-md-4">
+        <div class="card shadow-sm border-start border-primary border-4 h-100">
+            <div class="card-body">
+                <h6 class="text-muted text-uppercase mb-2">{% trans "Total Spent" %}</h6>
+                <h2 class="fw-bold text-primary mb-0">{{ total_spent }} €</h2>
+                <small class="text-muted">{% trans "In the selected period" %}</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card shadow-sm border-start border-success border-4 h-100">
+            <div class="card-body">
+                <h6 class="text-muted text-uppercase mb-2">{% trans "Processed Receipts" %}</h6>
+                <h2 class="fw-bold text-success mb-0">{{ receipts_count }}</h2>
+                <small class="text-muted">{% trans "Analyzed documents" %}</small>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-4">
+    <div class="card shadow-sm border-start border-warning border-4 h-100">
+        <div class="card-body">
+            <h6 class="text-muted text-uppercase mb-2">{% trans "Average per Receipt" %}</h6>
+            <!-- ✅ AGGIUNTO floatformat:2 per arrotondare a 2 decimali -->
+            <h2 class="fw-bold text-warning mb-0">{{ average_per_receipt|floatformat:2 }} €</h2>
+            <small class="text-muted">{% trans "Average value" %}</small>
+        </div>
+    </div>
+</div>
+</div>
+
+<div class="row g-4">
+    <!-- GRAFICO CATEGORIE -->
+    <div class="col-lg-8">
+        <div class="card shadow-sm h-100">
+            <div class="card-header bg-white fw-bold">
+                <i class="bi bi-pie-chart"></i> {% trans "Distribution by Category" %}
+            </div>
+            <div class="card-body d-flex justify-content-center" style="max-height: 400px;">
+                <canvas id="categorieChart"></canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOP SUPERMERCATI -->
+    <!-- TOP SUPERMERCATI -->
+    <div class="col-lg-4">
+        <div class="card shadow-sm h-100">
+            <div class="card-header bg-white fw-bold">
+                <i class="bi bi-shop"></i> {% trans "Top 5 Stores" %}
+            </div>
+            <div class="card-body p-0">
+                <ul class="list-group list-group-flush">
+                    {% for store_data in top_stores %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <!-- ✅ CORRETTO: La chiave è 'store__name' -->
+                        <span>{{ store_data.store__name|default:_("Not specified") }}</span>
+                        <span class="badge bg-primary rounded-pill">{{ store_data.total|floatformat:2 }} €</span>
+                    </li>
+                    {% empty %}
+                    <li class="list-group-item text-muted text-center py-4">{% trans "No data available" %}</li>
+                    {% endfor %}
+                </ul>
+            </div>
+        </div>
+        
+        <!-- TEASER PER IL FUTURO -->
+        <div class="card shadow-sm mt-4 bg-light border-dashed">
+            <div class="card-body text-center text-muted">
+                <i class="bi bi-graph-up-arrow fs-1"></i>
+                <h6 class="mt-2">{% trans "Price Trends" %}</h6>
+                <p class="small mb-0">{% trans "Coming soon: discover if your favorite product has increased in price over time." %}</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    // Configurazione Grafico a Ciambella
+    const ctx = document.getElementById('categorieChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: {{ category_labels|safe }},
+            datasets: [{
+                data: {{ category_data|safe }},
+                backgroundColor: [
+                    '#0d6efd', '#198754', '#ffc107', '#dc3545', 
+                    '#6f42c1', '#20c997', '#fd7e14', '#6c757d'
+                ],
+                borderWidth: 0,
+                hoverOffset: 10
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    position: 'right',
+                    labels: { usePointStyle: true, padding: 20 }
+                },
+                tooltip: {
+                    callbacks: {
+                        label: function(context) {
+                            let label = context.label || '';
+                            if (label) { label += ': '; }
+                            label += context.parsed.toFixed(2) + ' €';
+                            return label;
+                        }
+                    }
+                }
+            }
+        }
+    });
+</script>
+{% endblock %}

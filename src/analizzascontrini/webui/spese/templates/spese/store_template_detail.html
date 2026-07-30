@@ -1,0 +1,143 @@
+{% extends "spese/base.html" %}
+
+{% block title %}Supermercato{% endblock %}
+
+{% block content %}
+
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-shop"></i> {{ store_template.name }}</h2>
+        <div>
+            <a href="{% url 'supermercato_update' store_template.pk %}" class="btn btn-warning">
+                <i class="bi bi-pencil"></i> Modifica
+            </a>
+            <a href="{% url 'supermercato_delete' store_template.pk %}" class="btn btn-danger" 
+               onclick="return confirm('Sei sicuro di voler eliminare questo supermercato e tutte le configurazioni associate?');">
+                <i class="bi bi-trash"></i> Elimina
+            </a>
+            <a href="{% url 'supermercato_list' %}" class="btn btn-secondary">
+                <i class="bi bi-arrow-left"></i> Indietro
+            </a>
+        </div>
+    </div>
+
+    <!-- STATISTICHE -->
+    <div class="row g-3 mb-4">
+        <div class="col-md-4">
+            <div class="card shadow-sm border-start border-primary border-4">
+                <div class="card-body">
+                    <small class="text-muted text-uppercase fw-bold">Scontrini Associati</small>
+                    <div class="fs-2 fw-bold text-primary">{{ num_receipts|default:"0" }}</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm border-start border-info border-4">
+                <div class="card-body">
+                    <small class="text-muted text-uppercase fw-bold">Mapping Articoli</small>
+                    <div class="fs-2 fw-bold text-info">{{ num_mappings|default:"0" }}</div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card shadow-sm border-start border-{% if store_template.repeated_items %}success{% else %}secondary{% endif %} border-4">
+                <div class="card-body">
+                    <small class="text-muted text-uppercase fw-bold">Articoli Ripetuti</small>
+                    <div class="fs-2 fw-bold">
+                        {% if store_template.repeated_items %}
+                            <i class="bi bi-check-circle text-success"></i> Sì
+                        {% else %}
+                            <i class="bi bi-x-circle text-secondary"></i> No
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- IDENTIFICAZIONE -->
+    <div class="card shadow mb-4">
+        <div class="card-header bg-primary text-white">
+            <i class="bi bi-tag"></i> Identificazione
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6 mb-2">
+                    <strong>Nome:</strong> {{ store_template.name }}
+                </div>
+                <div class="col-md-6 mb-2">
+                    <strong>Parola Chiave:</strong> <code class="bg-light px-2 py-1">{{ store_template.keyword }}</code>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PROMPT LLM -->
+    <div class="card shadow mb-4">
+        <div class="card-header bg-info text-white">
+            <i class="bi bi-robot"></i> Prompt per LLM
+        </div>
+        <div class="card-body">
+            <h6 class="fw-bold">Istruzioni estrazione articoli:</h6>
+            <pre class="bg-light p-3 rounded border">{{ store_template.prompt_instruction|default:"(non configurato)" }}</pre>
+        </div>
+    </div>
+
+    <!-- PARSING REGEX E NORMALIZZAZIONE -->
+    <div class="card shadow mb-4">
+        <div class="card-header bg-secondary text-white">
+            <i class="bi bi-code-slash"></i> Parsing OCR e Normalizzazione
+        </div>
+        <div class="card-body">
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <h6 class="fw-bold">Regex Quantità:</h6>
+                    <code class="d-block bg-dark text-light p-3 rounded font-monospace">
+                        {{ store_template.quantity_regex|default:"(non configurato)" }}
+                    </code>
+                </div>
+                <div class="col-md-6">
+                    <h6 class="fw-bold">Regex Sconti:</h6>
+                    <code class="d-block bg-dark text-light p-3 rounded font-monospace">
+                        {{ store_template.discount_regex|default:"(non configurato)" }}
+                    </code>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <h6 class="fw-bold">Pattern Rimuovi IVA:</h6>
+                <code class="d-block bg-dark text-light p-3 rounded font-monospace">
+                    {{ store_template.remove_vat_pattern|default:"(non configurato)" }}
+                </code>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <h6 class="fw-bold">Righe da Ignorare:</h6>
+                    <ul class="list-group">
+                        {% for riga in store_template.ignored_lines %}
+                            <li class="list-group-item font-monospace"><code>{{ riga }}</code></li>
+                        {% empty %}
+                            <li class="list-group-item text-muted">Nessuna riga da ignorare</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+                <div class="col-md-6">
+                    <h6 class="fw-bold">Parole Chiave Negozio:</h6>
+                    <ul class="list-group">
+                        {% for parola in store_template.store_keywords %}
+                            <li class="list-group-item font-monospace"><code>{{ parola }}</code></li>
+                        {% empty %}
+                            <li class="list-group-item text-muted">Nessuna parola chiave configurata</li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+
+
+{% endblock %}

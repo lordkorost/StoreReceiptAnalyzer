@@ -1,0 +1,403 @@
+{% extends "spese/base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Edit AI Settings"%}{% endblock %}
+
+{% block content %}
+<div class="container mt-4">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-pencil-square"></i>{% trans "Edit AI Settings"%}</h2>
+        <a href="{% url 'ai_config_detail' %}" class="btn btn-secondary">
+            <i class="bi bi-arrow-left"></i>{% trans "Cancel"%}
+        </a>
+    </div>
+
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-{{ message.tags }} alert-dismissible fade show">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        {% endfor %}
+    {% endif %}
+
+    <form method="post" id="ai-config-form">
+        {% csrf_token %}
+        
+        <!-- SEZIONE CONNESSIONE E MODELLI -->
+        <div class="card shadow mb-4">
+            <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+                <span><i class="bi bi-hdd-network"></i>{% trans "Connection and Models"%}</span>
+                <button type="button" id="btn-test-config" class="btn btn-light btn-sm">
+                    <i class="bi bi-search"></i>{% trans "Test Settings"%}
+                </button>
+            </div>
+            <div class="card-body">
+                <div class="mb-3">
+                    <label for="{{ form.ollama_host.id_for_label }}" class="form-label fw-bold">Ollama Host</label>
+                    <div class="input-group">
+                        {{ form.ollama_host }}
+                        <span class="input-group-text status-icon" id="icon-host">⏳</span>
+                    </div>
+                    <div class="form-text">{{ form.ollama_host.help_text }}</div>
+                </div>
+
+                               <div class="row g-3">
+                    <!-- MODELLO OCR -->
+                    <!-- MODELLO OCR -->
+<div class="col-md-3 mb-3">
+    <label for="id_ocr_model" class="form-label fw-bold">{% trans "OCR Model" %}</label>
+    <div class="input-group">
+        <select name="ocr_model" id="id_ocr_model" class="form-select model-select">
+            {% if not available_models %}
+                {% with default_text=_("Click 'Test' to load models") %}
+                    <option value="{{ form.ocr_model.value|default:'' }}" selected>
+                        {{ form.ocr_model.value|default:default_text }}
+                    </option>
+                {% endwith %}
+            {% else %}
+                {% for model in available_models %}
+                    <option value="{{ model }}" {% if model == form.ocr_model.value %}selected{% endif %}>
+                        {{ model }}
+                    </option>
+                {% endfor %}
+                {% if form.ocr_model.value and form.ocr_model.value not in available_models %}
+                    <option value="{{ form.ocr_model.value }}" selected>
+                        ⚠️ {{ form.ocr_model.value }} ({% trans "not available" %})
+                    </option>
+                {% endif %}
+            {% endif %}
+        </select>
+        <span class="input-group-text status-icon" id="icon-ocr">
+            {% if available_models %}✅{% else %}⏳{% endif %}
+        </span>
+    </div>
+</div>
+
+<!-- MODELLO ANALISI -->
+<div class="col-md-3 mb-3">
+    <label for="id_analysis_model" class="form-label fw-bold">{% trans "Analysis Model" %}</label>
+    <div class="input-group">
+        <select name="analysis_model" id="id_analysis_model" class="form-select model-select">
+            {% if not available_models %}
+                {% with default_text=_("Click 'Test' to load models") %}
+                    <option value="{{ form.analysis_model.value|default:'' }}" selected>
+                        {{ form.analysis_model.value|default:default_text }}
+                    </option>
+                {% endwith %}
+            {% else %}
+                {% for model in available_models %}
+                    <option value="{{ model }}" {% if model == form.analysis_model.value %}selected{% endif %}>
+                        {{ model }}
+                    </option>
+                {% endfor %}
+                {% if form.analysis_model.value and form.analysis_model.value not in available_models %}
+                    <option value="{{ form.analysis_model.value }}" selected>
+                        ⚠️ {{ form.analysis_model.value }} ({% trans "not available" %})
+                    </option>
+                {% endif %}
+            {% endif %}
+        </select>
+        <span class="input-group-text status-icon" id="icon-analisi">
+            {% if available_models %}✅{% else %}⏳{% endif %}
+        </span>
+    </div>
+</div>
+
+<!-- MODELLO CATEGORIZZAZIONE -->
+<div class="col-md-3 mb-3">
+    <label for="id_categorization_model" class="form-label fw-bold">{% trans "Categorization Model" %}</label>
+    <div class="input-group">
+        <select name="categorization_model" id="id_categorization_model" class="form-select model-select">
+            {% if not available_models %}
+                {% with default_text=_("Click 'Test' to load models") %}
+                    <option value="{{ form.categorization_model.value|default:'' }}" selected>
+                        {{ form.categorization_model.value|default:default_text }}
+                    </option>
+                {% endwith %}
+            {% else %}
+                {% for model in available_models %}
+                    <option value="{{ model }}" {% if model == form.categorization_model.value %}selected{% endif %}>
+                        {{ model }}
+                    </option>
+                {% endfor %}
+                {% if form.categorization_model.value and form.categorization_model.value not in available_models %}
+                    <option value="{{ form.categorization_model.value }}" selected>
+                        ⚠️ {{ form.categorization_model.value }} ({% trans "not available" %})
+                    </option>
+                {% endif %}
+            {% endif %}
+        </select>
+        <span class="input-group-text status-icon" id="icon-cat">
+            {% if available_models %}✅{% else %}⏳{% endif %}
+        </span>
+    </div>
+</div>
+
+<!-- MODELLO CHAT -->
+<div class="col-md-3 mb-3">
+    <label for="id_chat_model" class="form-label fw-bold">{% trans "Chat Model" %}</label>
+    <div class="input-group">
+        <select name="chat_model" id="id_chat_model" class="form-select model-select">
+            {% if not available_models %}
+                {% with default_text=_("Click 'Test' to load models") %}
+                    <option value="{{ form.chat_model.value|default:'' }}" selected>
+                        {{ form.chat_model.value|default:default_text }}
+                    </option>
+                {% endwith %}
+            {% else %}
+                {% for model in available_models %}
+                    <option value="{{ model }}" {% if model == form.chat_model.value %}selected{% endif %}>
+                        {{ model }}
+                    </option>
+                {% endfor %}
+                {% if form.chat_model.value and form.chat_model.value not in available_models %}
+                    <option value="{{ form.chat_model.value }}" selected>
+                        ⚠️ {{ form.chat_model.value }} ({% trans "not available" %})
+                    </option>
+                {% endif %}
+            {% endif %}
+        </select>
+        <span class="input-group-text status-icon" id="icon-chat">
+            {% if available_models %}✅{% else %}⏳{% endif %}
+        </span>
+    </div>
+</div>
+                </div>
+                
+                <div id="test-error-msg" class="alert alert-danger d-none"></div>
+            </div>
+        </div>
+
+        <!-- SEZIONE PROMPT -->
+        <div class="card shadow mb-4">
+            <div class="card-header bg-info text-white">
+                <i class="bi bi-file-text"></i> {%trans "Custom Prompts"%}
+            </div>
+            <div class="card-body">
+                <p class="text-muted small">{%trans "Leave blank to use the default system prompts. Use"%} <code>__TESTO_OCR__</code>, <code>__CATEGORIE__</code>, <code>__ARTICOLI__</code> {%trans "as placeholder"%}</p>
+                
+                                <div class="mb-3">
+                    <label for="{{ form.ocr_prompt.id_for_label }}" class="form-label fw-bold">{%trans "OCR Prompt"%}</label>
+                    {{ form.ocr_prompt }}
+                </div>
+                <div class="mb-3">
+                    <label for="{{ form.analysis_prompt.id_for_label }}" class="form-label fw-bold">{%trans "Analysis Prompt"%}</label>
+                    {{ form.analysis_prompt }}
+                </div>
+                <div class="mb-3">
+                    <label for="{{ form.categorization_prompt.id_for_label }}" class="form-label fw-bold">{%trans "Categorization Prompt"%}</label>
+                    {{ form.categorization_prompt }}
+                </div>
+            </div>
+        </div>
+
+        <div class="d-grid gap-2 d-md-flex justify-content-md-end mb-5">
+            <a href="{% url 'ai_config_detail' %}" class="btn btn-secondary me-md-2">{%trans "Cancel"%}</a>
+            <button type="submit" class="btn btn-success btn-lg">
+                <i class="bi bi-save"></i> {%trans "Save Settings"%}
+            </button>
+        </div>
+    </form>
+</div>
+
+{% block extra_js %}
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const btnTest = document.getElementById('btn-test-config');
+    if (!btnTest) return; // Sicurezza: esci se il pulsante non esiste
+
+    // 1. TRUCCO ANTI-DOPPIO BINDING: clona il pulsante per rimuovere qualsiasi listener già attaccato
+    const safeBtn = btnTest.cloneNode(true);
+    btnTest.parentNode.replaceChild(safeBtn, btnTest);
+
+    const errorMsg = document.getElementById('test-error-msg');
+    let isTesting = false; // Flag per prevenire doppi click
+    
+    const icons = {
+        host: document.getElementById('icon-host'),
+        ocr: document.getElementById('icon-ocr'),
+        analisi: document.getElementById('icon-analisi'),
+        cat: document.getElementById('icon-cat'),
+        chat: document.getElementById('icon-chat')
+    };
+
+    safeBtn.addEventListener('click', function(e) {
+        e.preventDefault(); // 2. PREVIENTE QUALSIASI SUBMIT DEL FORM
+        
+        if (isTesting) {
+            console.warn("⚠️ Test già in corso, click ignorato.");
+            return;
+        }
+        isTesting = true;
+        console.log("🚀 Avvio richiesta test configurazione...");
+
+        // Reset icone a "loading"
+        Object.values(icons).forEach(icon => { if(icon) icon.innerText = '⏳'; });
+        if (errorMsg) errorMsg.classList.add('d-none');
+        
+        safeBtn.disabled = true;
+        safeBtn.innerHTML = '<span class="spinner-border spinner-border-sm" role="status"></span> Test in corso...';
+
+        // Raccogli i dati dal form
+        const formData = new FormData();
+        const hostInput = document.getElementById('{{ form.ollama_host.id_for_label }}');
+        if (hostInput) formData.append('ollama_host', hostInput.value);
+        
+        formData.append('ocr_model', document.getElementById('id_ocr_model')?.value || '');
+        formData.append('analysis_model', document.getElementById('id_analysis_model')?.value || '');
+        formData.append('categorization_model', document.getElementById('id_categorization_model')?.value || '');
+        formData.append('chat_model', document.getElementById('id_chat_model')?.value || '');
+        
+        const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]');
+        if (csrfToken) formData.append('csrfmiddlewaretoken', csrfToken.value);
+
+        // Chiama l'API per creare il task
+        fetch('{% url "api_check_ollama" %}', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            console.log("✅ Risposta API ricevuta:", data);
+            if (data.success) {
+                startOllamaCheck(data.task_id);
+            } else {
+                throw new Error(data.error || '{% trans "Error create task" %}');
+            }
+        })
+        .catch(err => {
+            console.error("❌ Errore fetch:", err);
+            if (errorMsg) {
+                errorMsg.innerText = "{% trans 'Error connection:' %}" + err.message;
+                errorMsg.classList.remove('d-none');
+            }
+            resetButtons();
+        });
+    });
+
+        function startOllamaCheck(taskId) {
+        console.log("🔌 Connessione WS per task ID:", taskId);
+        const wsManager = new TaskWebSocketManager(taskId, "PENDING", {
+            onProcessing: () => {},
+
+            onFailed: (data) => {
+                Object.values(icons).forEach(icon => { if(icon) icon.innerText = '❌'; });
+                if (errorMsg) {
+                    errorMsg.innerText = data.error || "{% trans 'Verifica fallita' %}";
+                    errorMsg.classList.remove('d-none');
+                }
+                resetButtons();
+            },
+
+            onCompleted: (data) => {
+                let fetchUrl = "{% url 'api_task_status' 9999 %}".replace('9999', taskId);
+                
+                fetch(fetchUrl)
+                    .then(response => {
+                        if (!response.ok) throw new Error(`HTTP ${response.status}`);
+                        return response.json();
+                    })
+                    .then(taskData => {
+                        console.log("📦 RISPOSTA API COMPLETA:", taskData); // <-- DEBUG CRUCIALE
+
+                        if (taskData.error) throw new Error(taskData.error);
+
+                        // ✅ PARSING ROBUSTO: cerca 'data', poi 'datas', poi l'oggetto stesso
+                        const rawData = taskData.data || taskData.datas || taskData;
+                        const output = rawData.output || {};
+                        const input = rawData.input || {};
+                        
+                        console.log("🔍 OUTPUT PARSATO:", output); // <-- DEBUG CRUCIALE
+
+                        // Aggiorna icone in base ai valori booleani reali
+                        if(icons.host) icons.host.innerText = output.host_raggiungibile === true ? '✅' : '❌';
+                        if(icons.ocr) icons.ocr.innerText = output.modello_ocr_presente === true ? '✅' : '❌';
+                        if(icons.analisi) icons.analisi.innerText = output.modello_analisi_presente === true ? '✅' : '❌';
+                        if(icons.cat) icons.cat.innerText = output.modello_categorizzazione_presente === true ? '✅' : '❌';
+                        if(icons.chat) icons.chat.innerText = output.modello_chat_presente === true ? '✅' : '❌';
+                        
+                        // Mostra errore SOLO se host_raggiungibile è esplicitamente false
+                        if (output.host_raggiungibile === false && errorMsg) {
+                            errorMsg.innerText = output.errore_dettagliato || "{% trans 'Impossibile raggiungere Ollama.' %}";
+                            errorMsg.classList.remove('d-none');
+                        } else if (output.host_raggiungibile === true && errorMsg) {
+                            // Se ha successo, nascondi eventuali errori precedenti
+                            errorMsg.classList.add('d-none');
+                        }
+
+                        // Popola i dropdown
+                        if (output.modelli_disponibili && output.modelli_disponibili.length > 0) {
+                            const models = output.modelli_disponibili;
+                            document.querySelectorAll('.model-select').forEach(select => {
+                                let fieldName = '';
+                                if (select.id === 'id_ocr_model') fieldName = 'ocr_model'; // o 'modello_ocr' a seconda del form
+                                else if (select.id === 'id_analysis_model') fieldName = 'analysis_model';
+                                else if (select.id === 'id_categorization_model') fieldName = 'categorization_model';
+                                else if (select.id === 'id_chat_model') fieldName = 'chat_model';
+                                
+                                // Fallback per leggere il valore corrente
+                                const currentModel = (input && input[fieldName]) ? input[fieldName] : (input[`modello_${fieldName.split('_')[0]}`] || select.value);
+                                
+                                select.innerHTML = '';
+                                
+                                const emptyOpt = document.createElement('option');
+                                emptyOpt.value = '';
+                                emptyOpt.textContent = '{% trans "-- Select a model --" %}';
+                                select.appendChild(emptyOpt);
+                                
+                                models.forEach(modelName => {
+                                    const opt = document.createElement('option');
+                                    opt.value = modelName;
+                                    opt.textContent = modelName;
+                                    if (modelName === currentModel) opt.selected = true;
+                                    select.appendChild(opt);
+                                });
+                                
+                                if (currentModel && !models.includes(currentModel)) {
+                                    const warningOpt = document.createElement('option');
+                                    warningOpt.value = currentModel;
+                                    warningOpt.textContent = `⚠️ ${currentModel} ({% trans "not available" %})`;
+                                    warningOpt.selected = true;
+                                    select.insertBefore(warningOpt, select.firstChild.nextSibling);
+                                }
+                            });
+                        }
+                        resetButtons();
+                    })
+                    .catch(err => {
+                        console.error("❌ ERRORE CRITICO nel recupero dati:", err);
+                        if (errorMsg) {
+                            errorMsg.innerText = `{% trans 'Errore nel recupero dati:' %} ${err.message}`;
+                            errorMsg.classList.remove('d-none');
+                        }
+                        resetButtons();
+                    });
+            },
+
+            onError: (err) => {
+                console.error("WS Error:", err);
+                if (errorMsg) {
+                    errorMsg.innerText = "{% trans 'Errore di connessione WebSocket' %}";
+                    errorMsg.classList.remove('d-none');
+                }
+                resetButtons();
+            }
+        });
+
+        wsManager.start();
+    
+    }
+
+    function resetButtons() {
+        isTesting = false; // Sblocca il pulsante per il prossimo test
+        safeBtn.disabled = false;
+        safeBtn.innerHTML = '<i class="bi bi-search"></i> Testa Configurazione';
+    }
+});
+</script>
+{% endblock %}
+
+
+{% endblock %}

@@ -1,0 +1,53 @@
+{% extends 'spese/base.html' %}
+{% load i18n %}
+{% block title %}{% trans "Upload Receipt" %}{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-6">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h3 class="mb-0"><i class="bi bi-cloud-upload"></i> {% trans "Upload New Receipt" %}</h3>
+            </div>
+            <div class="card-body">
+
+                {% if errore %}
+                <div class="alert alert-danger">
+                    <i class="bi bi-exclamation-triangle"></i> {{ errore }}
+                </div>
+                {% endif %}
+
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">{% trans "Receipt Image" %}</label>
+                        <input class="form-control form-control-lg" type="file" name="image" accept="image/*" required>
+                    </div>
+
+                    <div class="mb-4">
+                        <label class="form-label fw-bold">{% trans "Store" %}</label>
+                        <div class="input-group">
+                            <select class="form-select" name="store" id="negozio">
+                               
+                                {% for s in stores %}
+                                    <option value="{{ s.id }}">{{ s.name }}</option>
+                                {% endfor %}
+                            </select>
+                      
+                        </div>
+                    </div>
+
+                    <button class="btn btn-success btn-lg w-100">
+                        <i class="bi bi-play-fill"></i> {% trans "Start analysis" %}
+                    </button>
+                </form>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+
+{% endblock %}
+
