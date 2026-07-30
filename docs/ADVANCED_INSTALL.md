@@ -83,17 +83,16 @@ python3 -m venv venv
 source venv/bin/activate
 ```
 
-### 4.2 Install Dependencies and Package
-This step installs external requirements and registers the application's entry points (like the as-worker command) defined in pyproject.toml.
+### 4.2 Install Dependencies
+This step installs the required Python dependencies and registers the project's command-line entry points (such as `as-worker`) defined in `pyproject.toml`.
 
 ```bash
-# Install standard requirements
+# Install Python requirements
 pip install -r requirements.txt
 
-# Install the project itself in editable mode (generates 'as-worker' executable)
+# Install the project and register CLI entry points
 pip install  .
 ```
-
 
 ## 5. Configure the Environment
 
@@ -127,8 +126,12 @@ SECRET_KEY=your-generated-secret-key
 DEBUG=False
 
 ALLOWED_HOSTS=localhost,127.0.0.1,192.168.1.11
+#Replace 192.168.1.11 with the actual IP address or hostname used to access the application.
 
 CSRF_TRUSTED_ORIGINS=https://192.168.1.11:81
+# When using HTTPS through Nginx, Django must trust the public URL
+# The value must include the protocol (`http://` or `https://`).
+# Replace 192.168.1.11 with the actual IP address or hostname
 
 AS_HOST=localhost
 AS_PORT=8001
@@ -139,17 +142,6 @@ SERVE_MEDIA=False
 > [!NOTE]
 > AS_PORT is the internal Daphne port. It does not need to match the HTTPS port exposed by Nginx.
 
-### HTTPS configuration
-
-When using HTTPS through Nginx, Django must trust the public URL used to access the application.
-
-For example:
-
-```env
-CSRF_TRUSTED_ORIGINS=https://192.168.1.11:81
-```
-> [!NOTE]
-> If the application is exposed on another address or port, update this value accordingly.
 
 
 ### PostgreSQL
@@ -164,22 +156,29 @@ Django requires a dedicated database and user. Follow these steps to create them
 sudo -u postgres psql
 ```
 **2. Create the database and user:**
+
 Run the following SQL commands inside the psql prompt. Replace 'your-secure-password' with a strong, unique password.
+
 ```bash
-CREATE DATABASE storereceiptanalyzer_db;
 CREATE USER storereceiptanalyzer_user WITH PASSWORD 'your-secure-password';
 
--- Optimize settings for Django
+CREATE DATABASE storereceiptanalyzer_db OWNER storereceiptanalyzer_user;
+
 ALTER ROLE storereceiptanalyzer_user SET client_encoding TO 'utf8';
 ALTER ROLE storereceiptanalyzer_user SET default_transaction_isolation TO 'read committed';
 ALTER ROLE storereceiptanalyzer_user SET timezone TO 'UTC';
 
--- Grant privileges
 GRANT ALL PRIVILEGES ON DATABASE storereceiptanalyzer_db TO storereceiptanalyzer_user;
 
--- Exit the prompt
+\c storereceiptanalyzer_db
+
+GRANT ALL ON SCHEMA public TO storereceiptanalyzer_user;
+
 \q
 ```
+> [!NOTE]
+> PostgreSQL 15+ restricts permissions on the default `public` schema.
+> The schema privilege grant above is required for Django migrations.
 
 **3. Configure the .env file:**
 
@@ -207,7 +206,7 @@ The Ollama server must be reachable from this machine.
 > If Ollama runs on another machine, it must listen on a network interface instead of localhost.
 
 ```bash
-OLLAMA_HOST=0.0.0.0 ollama serve
+OLLAMA_HOST=0.0.0.0:11434 ollama serve
 ```
 
 ### Redis
@@ -215,6 +214,8 @@ OLLAMA_HOST=0.0.0.0 ollama serve
 ```env
 REDIS_URL=redis://localhost:6379/0
 ```
+> [!NOTE]
+> Redis is used for Django Channels and background worker communication.
 
 ### Media
 
@@ -223,7 +224,8 @@ When using Nginx to serve uploaded files:
 ```env
 SERVE_MEDIA=False
 ```
-
+> [!NOTE]
+> Set SERVE_MEDIA=True only for development or when Django directly serves uploaded files.
 
 ## 6. Run database migrations
 
@@ -232,15 +234,17 @@ SERVE_MEDIA=False
 python manage.py migrate
 
 # Collect static files for Nginx to serve
-python manage.py collectstatic 
+python manage.py collectstatic --noinput
 ```
-
+> [!NOTE]
+> Run these commands from the Django project directory and inside the virtual environment.
 
 
 
 ## 7. Port Management
 
-Each application uses a dedicated HTTPS port.
+Each application uses a dedicated HTTPS listener port managed by Nginx.
+
 | HTTPS Port | Service | Description |
 |------------|---------|-------------|
 | 443 | Home | Landing page |
@@ -264,7 +268,15 @@ Nginx configurations are split into available and enabled sites:
 
 Each application has its own configuration file in sites-available/ and is activated via a symlink in sites-enabled/.
 
-## Reverse Proxy Setup
+```bash
+sudo ln -s /etc/nginx/sites-available/storereceiptanalyzer \
+/etc/nginx/sites-enabled/
+
+sudo nginx -t
+sudo systemctl reload nginx
+```
+
+## 9. Reverse Proxy Setup
 
 One Nginx configuration file should be created for each hosted application.
 
@@ -275,6 +287,7 @@ StoreReceiptAnalyzer
 # Inside /etc/nginx/sites-available/storereceiptanalyzer example
 server {
     listen 81 ssl;
+    server_name _;
 
     ssl_certificate /etc/nginx/ssl/storereceiptanalyzer.crt;
     ssl_certificate_key /etc/nginx/ssl/storereceiptanalyzer.key;
@@ -285,7 +298,7 @@ server {
     location /static/ {
         alias /home/user/StoreReceiptAnalyzer/src/analizzascontrini/webui/static/;
     }
-
+    # Ensure the alias path ends with /
     location /media/ {
         alias /home/user/StoreReceiptAnalyzer/src/analizzascontrini/webui/media/;
     }
@@ -326,12 +339,11 @@ server {
     ssl_protocols TLSv1.2 TLSv1.3;
     ssl_ciphers HIGH:!aNULL:!MD5;
 
-    root /home/user/django;
 
     location /static/ {
         alias /home/user/django/staticfiles/;
     }
-
+    # Ensure the alias path ends with /
     location /media/ {
         alias /mnt/myremotemnt/media/;
     }
@@ -353,82 +365,12 @@ server {
 ```
 
 
-## Systemd Services
-Services are configured to start automatically at boot.
-Check status:
+## 10. Systemd Services
 
-```bash
-sudo systemctl status storereceiptanalyzer-web
-sudo systemctl status as-worker
-sudo systemctl status webapp1-gunicorn
-```
+The following examples show the systemd configuration used by StoreReceiptAnalyzer.
+Adjust paths, users, and virtual environment locations according to your installation.
 
-### Enable a service:
-```bash
-sudo systemctl enable <service-name>
-```
-### Start a service:
-```bash
-sudo systemctl start <service-name>
-```
-
-### Restart a service:
-```bash
-sudo systemctl restart <service-name>
-```
-
-## StoreReceiptAnalyzer Worker
-The background worker runs as a separate systemd service: as-worker.service.
-It reads its configuration from the .env file.
-Example .env entry:
-
-```env
-OLLAMA_HOST=http://SERVER_IP:11434
-```
-
-Note: After modifying the .env file, you must restart the worker:
-```bash 
-sudo systemctl restart as-worker
-```
-## UFW Firewall
-The server uses a restrictive firewall policy: Default: deny incoming.
-Only necessary LAN ports are allowed. Example configuration for a 192.168.1.x network:
-
-```bash
-sudo ufw allow from 192.168.1.0/24 to any port 443
-sudo ufw allow from 192.168.1.0/24 to any port 81
-sudo ufw allow from 192.168.1.0/24 to any port 82
-sudo ufw enable
-```
-
-Adjust the subnet if your LAN uses a different address range.
-
-## Landing Page
-The landing page is served directly by Nginx as static HTML.
-
-    File path: /var/www/home/index.html
-    URL: https://SERVER_IP
-
-This page contains direct links to Webapp1, StoreReceiptAnalyzer, and any future services.
-
-### SSL Certificates
-Certificates are stored locally in:
-
-```text
-/etc/nginx/ssl/
-```
-
-Example files:
-
-- storereceiptanalyzer.crt
-- storereceiptanalyzer.key
-
-Warning: Since these are local LAN certificates (self-signed or local CA), browsers will require manual acceptance of the security exception on the first visit.
-Self-signed certificates are sufficient for LAN deployments.
-
-# Systemd service
-
-## as-worker.service
+### as-worker.service
 
 ```ini
 # /etc/systemd/system/as-worker.service
@@ -453,7 +395,7 @@ RestartSec=5
 WantedBy=multi-user.target
 ```
 
-## storereceiptanalyzer-web.service
+### storereceiptanalyzer-web.service
 
 ```ini
 # /etc/systemd/system/storereceiptanalyzer-web.service
@@ -480,57 +422,157 @@ Restart=always
 WantedBy=multi-user.target
 ```
 
-# Troubleshooting
+> [!NOTE]
+> Environment variables are loaded from the project `.env` file by the application itself.
+> Ensure the service `WorkingDirectory` points to the correct project location.
 
-## Nginx Issues
 
-### Test configuration syntax:
+### Check status:
+```bash
+sudo systemctl status storereceiptanalyzer-web
+sudo systemctl status as-worker
+sudo systemctl status webapp1-gunicorn
+```
+
+### Enable a service:
+```bash
+sudo systemctl enable <service-name>
+```
+### Start a service:
+```bash
+sudo systemctl start <service-name>
+```
+
+### Restart a service:
+```bash
+sudo systemctl restart <service-name>
+```
+
+### StoreReceiptAnalyzer Worker
+The background worker runs as a separate systemd service: as-worker.service.
+It reads its configuration from the .env file.
+Example .env entry:
+
+```env
+OLLAMA_HOST=http://SERVER_IP:11434
+```
+
+> [!NOTE]
+> After modifying the .env file, you must restart the worker
+```bash 
+sudo systemctl restart as-worker
+```
+
+> [!NOTE]
+> The worker loads the same environment configuration used by Django.
+
+## 11. UFW Firewall
+The server uses a restrictive firewall policy: Default: deny incoming.
+Only necessary LAN ports are allowed. Example configuration for a 192.168.1.x network:
+
+```bash
+sudo ufw default deny incoming
+sudo ufw default allow outgoing
+sudo ufw allow from 192.168.1.0/24 to any port 443
+sudo ufw allow from 192.168.1.0/24 to any port 81
+sudo ufw allow from 192.168.1.0/24 to any port 82
+sudo ufw enable
+sudo ufw status verbose
+```
+
+> [!NOTE]
+> Adjust the subnet if your LAN uses a different address range.
+
+## 12. Landing Page
+The landing page is served directly by Nginx as static HTML.
+
+    File path: /var/www/home/index.html
+    URL: https://SERVER_IP
+
+Example:
+```nginx
+server {
+    listen 443 ssl;
+    server_name _;
+
+    root /var/www/home;
+
+    index index.html;
+}
+```
+
+This page contains direct links to Webapp1, StoreReceiptAnalyzer, and any future services.
+
+## 13. SSL Certificates
+Certificates are stored locally in:
+
+```text
+/etc/nginx/ssl/
+```
+
+Example files:
+
+- storereceiptanalyzer.crt
+- storereceiptanalyzer.key
+
+> [!WARN]
+>  Since these are local LAN certificates (self-signed or local CA), browsers will require manual acceptance of the security exception on the first visit.
+Self-signed certificates or certificates issued by a local CA are sufficient for LAN deployments.
+
+
+
+## 14. Troubleshooting
+
+### Nginx and Service Issues
+
+**Test configuration syntax:**
 
 ```bash
 sudo nginx -t
 ```
 
-### Reload Nginx (applies changes without downtime):
-
+**Reload Nginx (applies changes without downtime):**
 
 ```bash
 sudo systemctl reload nginx
 ```
 
-### Check logs
+**Check logs**
 
 ```bash
 sudo journalctl -u storereceiptanalyzer-web -f
 sudo journalctl -u as-worker -f
 ```
 
-### Check open ports:
+**Check open ports:**
 
 ```bash
 sudo ss -tlnp | grep nginx
 ```
 
-## Application Testing
+### Application Testing
 
 Verify the endpoints are responding (using -k to ignore self-signed cert warnings):
 
 ```bash
 # Test StoreReceiptAnalyzer
-curl -k -I https://SERVER_IP:81
+curl -k https://SERVER_IP:81
 
 # Test webapp1
-curl -k -I https://SERVER_IP:82
+curl -k https://SERVER_IP:82
 ```
 
-## WebSocket Not Working
+### WebSocket Not Working
+
 If real-time features fail, verify the following checklist:
 
-- Daphne service is active (systemctl status ...).
-- The internal port (8001) is correct and not blocked.
+- Daphne service is active:`systemctl status storereceiptanalyzer-web`
+- The internal port (8001) is correct and the Daphne process is listening.
 - Nginx configuration includes the Upgrade and Connection headers for WebSockets.
-- UFW is not blocking internal loopback traffic (it shouldn't by default).
+- UFW is not blocking internal loopback traffic (it should not by default).
 
-## Adding a New Application
+  
+## 15. Adding a New Application
 To add a new service to this ecosystem, follow these steps:
 
 - Create a new systemd service file.
@@ -546,7 +588,7 @@ Example for "webapp2":
     HTTPS Port: 83
     Backend Target: 127.0.0.1:8002
 
-## Final Result
+## 16. Final Result
 This architecture provides:
 
 - isolated applications
@@ -555,4 +597,6 @@ This architecture provides:
 - easy scalability
 - centralized entry point
 - LAN-only deployment
+- no external internet exposure required
+- data remains inside the LAN
 
