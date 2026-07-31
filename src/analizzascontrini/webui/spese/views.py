@@ -2246,7 +2246,7 @@ def setup_view(request):
     
     # If superusers already exist, redirect to the home page
     if User.objects.filter(is_superuser=True).exists():
-        return redirect('scontrini_list')
+        return redirect('scontrino_list')
     
     if request.method == 'POST':
         username = request.POST.get('username')
