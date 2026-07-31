@@ -179,7 +179,7 @@ This starts:
 ## Start only WebUI
 
 ```bash
-./run.sh -webui
+./run.sh web
 ```
 
 Starts only the Django application.
@@ -189,7 +189,7 @@ Starts only the Django application.
 ## Start only Worker
 
 ```bash
-./run.sh -worker
+./run.sh worker
 ```
 
 Starts only the background processing service.
