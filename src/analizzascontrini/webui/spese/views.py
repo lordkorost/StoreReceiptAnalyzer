@@ -1453,7 +1453,7 @@ class ReceiptListView(LoginRequiredMixin, ListView):
 class ReceiptDeleteView(LoginRequiredMixin, DeleteView):
 
     model = Receipt
-    success_url = reverse_lazy("receipts_list")
+    success_url = reverse_lazy("scontrino_list")
 
     def get_queryset(self):
 
