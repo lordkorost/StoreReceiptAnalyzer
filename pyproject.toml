@@ -3,9 +3,9 @@ requires = ["setuptools>=61.0"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "analizzascontrini"
+name = "StoreReceiptAnalyzer"
 version = "1.0.0"
-description = "Sistema di analisi scontrini con OCR e LLM"
+description = "StoreReceiptAnalyzer is a self-hosted, local AI-powered platform that transforms shopping receipts into structured expense data while keeping your financial information private and fully under your control."
 requires-python = ">=3.10"
 
 [project.scripts]
@@ -14,3 +14,13 @@ as-webui = "analizzascontrini.cli:run_webui"
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.package-data]
+"analizzascontrini.webui.spese" = [
+    "templates/**/*.html",
+    "static/**/*",
+]
+
+"analizzascontrini.webui" = [
+    "locale/**/*.mo",
+]

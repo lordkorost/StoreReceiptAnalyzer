@@ -20,7 +20,7 @@ from dotenv import load_dotenv, find_dotenv
 load_dotenv(find_dotenv())
 
 SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-change-me')
-CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS","").split(",")
+CSRF_TRUSTED_ORIGINS = os.getenv("CSRF_TRUSTED_ORIGINS","http://localhost").split(",")
 
 DEBUG = os.getenv('DEBUG', 'True').lower() == 'true'
 SERVE_MEDIA = os.getenv("SERVE_MEDIA","False").lower() == "true"
